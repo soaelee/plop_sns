@@ -1,56 +1,23 @@
-const initialState = {
-  user: {
-    isLogin: false,
-    user: null,
-    signupData: {},
-    loginData: {}
-  },
-  post: {
-    mainPosts: []
-  }
-}
+import { HYDRATE } from 'next-redux-wrapper'
+import user from './user'
+import post from './post'
 
-//async action creator
+import { combineReducers } from 'redux'
 
-
-//action creator
-
-export const loginAction = (data) => {
-  return {
-    type: 'LOG_IN',
-    data
-  }
-}
-
-export const logoutAction = () => {
-  return {
-    type: 'LOG_OUT',
-  }
-}
 //(prev state, action) => next state
-const reducer = (state = initialState, action) => {
-  switch(action.type){
-    case 'LOG_IN':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          isLogin: true,
-          user: action.data
-        }
-      }
-    case 'LOG_OUT':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          isLogin: false,
-          user: null
-        }
-      }
-    default:
-      return state
+const rootReducer = combineReducers({
+  //HYDRATE를 위한 index reducer 추가(SSR)
+  index: (state = {}, action) => {
+    switch(action.type) {
+      case HYDRATE:
+        return {...state, ...action.payload}
+      default:
+        return state
+    }
+  },
+  user,
+  post,
   }
-}
+)
 
-export default reducer
+export default rootReducer

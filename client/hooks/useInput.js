@@ -7,7 +7,11 @@ const useInput = (initialValue = null) => {
     setValue(e.target.value)
   }, []);
 
-  return {value, handler}
+  const resetValue = useCallback(() => {
+    setValue('')
+  }, []);
+
+  return {value, handler, resetValue}
 }
 
 export default useInput
