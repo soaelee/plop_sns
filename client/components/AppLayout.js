@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
 import { Menu, Input, Row, Col } from 'antd'
 import LoginForm from './LoginForm'
 import UserProfile from './UserProfile'
 import styled from 'styled-components'
+import { useSelector } from 'react-redux'
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `
 const AppLayout = ({children}) => {
   //dummy data
-  const [isLogin, setIsLogin] = useState(false);
+  // const [isLogin, setIsLogin] = useState(false);
+
+  const { isLogin } = useSelector((state) => state.user);
+
   return (
     <div>
       <Menu mode="horizontal">
@@ -32,7 +36,7 @@ const AppLayout = ({children}) => {
         {/* Column간의 Padding : 8px */}
         {/* BREAKPOINT : xs - mobile, sm - tablet, md - desktop */}
         <Col xs={24} md={6}>
-          {isLogin ? <UserProfile setIsLogin={setIsLogin}/> : <LoginForm setIsLogin={setIsLogin}/>}
+          {isLogin ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

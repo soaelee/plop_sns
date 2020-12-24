@@ -9,6 +9,7 @@ const ErrorMessage = styled.div`
   color: red;
 `
 const Signup = () => {
+
   const id = useInput('')
   const password = useInput('')
   const nickname = useInput('')
@@ -17,10 +18,11 @@ const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('')
   const [passwordError, setPasswordError] = useState(false)
 
-  const [term, setTerm] = useState('')
+  const [term, setTerm] = useState(false)
   const [termError, setTermError] = useState(false)
   const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked)
+    console.log(e.target.checked)
     setTermError(false)
   }, [])
 

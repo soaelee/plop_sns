@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Head from'next/head'
 import 'antd/dist/antd.css'
+import wrapper from '../store/configureStore'
+
+// next-redux-wrapper는 provider로 감싸줄 필요가 없음
 
 const App = ({Component}) => {
   return (
@@ -19,6 +22,6 @@ App.propTypes = {
   Component: PropTypes.elementType.isRequired,
 }
 
-export default App
+export default wrapper.withRedux(App)
 
 //공통적인 부분
