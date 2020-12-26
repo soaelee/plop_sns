@@ -12,6 +12,8 @@ export const initialState = {
       src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg'
     },{
       src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg'
+    },{
+      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg'
     }],
     Comments: [{
       User: {

@@ -6,7 +6,22 @@ import LoginForm from './LoginForm'
 import UserProfile from './UserProfile'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
+import { createGlobalStyle } from 'styled-components'
 
+const Global = createGlobalStyle`
+  .ant-row{
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .ant-col:first-child {
+    padding-left: 0 !important;
+  }
+
+  .ant-col:last-child {
+    padding-right: 0 !important;
+  }
+`
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `
@@ -18,6 +33,7 @@ const AppLayout = ({children}) => {
 
   return (
     <div>
+      <Global />
       <Menu mode="horizontal">
         <Menu.Item>
           <Link href="/"><a>PLOP</a></Link>
@@ -35,13 +51,13 @@ const AppLayout = ({children}) => {
       <Row gutter={8}>
         {/* Column간의 Padding : 8px */}
         {/* BREAKPOINT : xs - mobile, sm - tablet, md - desktop */}
-        <Col xs={24} md={6}>
+        <Col xs={24} sm={8} md={6}>
           {isLogin ? <UserProfile /> : <LoginForm />}
         </Col>
-        <Col xs={24} md={12}>
+        <Col xs={24} sm={16} md={12}>
           {children}
         </Col>
-        <Col xs={24} md={6}>
+        <Col xs={24} sm={24} md={6}>
           <a 
             href="https://soae.jjagu.com" 
             target="_blank" 
