@@ -29,7 +29,7 @@ const AppLayout = ({children}) => {
   //dummy data
   // const [isLogin, setIsLogin] = useState(false);
 
-  const { isLogin } = useSelector((state) => state.user);
+  const { loginDone } = useSelector((state) => state.user);
 
   return (
     <div>
@@ -52,7 +52,7 @@ const AppLayout = ({children}) => {
         {/* Column간의 Padding : 8px */}
         {/* BREAKPOINT : xs - mobile, sm - tablet, md - desktop */}
         <Col xs={24} sm={8} md={6}>
-          {isLogin ? <UserProfile /> : <LoginForm />}
+          {loginDone ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} sm={16} md={12}>
           {children}
