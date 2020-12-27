@@ -7,7 +7,7 @@ export const initialState = {
       id: 1,
       nickname: 'JJAGU',
     },
-    content: 'First Content',
+    content: 'First Content #Hash #Tag',
     Images: [{
       src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg'
     },{

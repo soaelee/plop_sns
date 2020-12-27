@@ -13,6 +13,9 @@ const PostImages = ({images}) => {
   const onClose = useCallback(() => {
     setShowImagesZoom(false)
   }, []);
+  
+  // 이미지가 몇 개인지에 따라 다르게 리턴하기
+
   if (images.length === 1) {
     return(
       <>
@@ -31,6 +34,7 @@ const PostImages = ({images}) => {
       </>
     )
   }
+  // 3개 이상이면 더보기 버튼으로 넘어가게 할 것!
   return (
     <>
       <div>
