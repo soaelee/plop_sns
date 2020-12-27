@@ -4,6 +4,8 @@ import Head from'next/head'
 import 'antd/dist/antd.css'
 import wrapper from '../store/configureStore'
 
+import withReduxSaga from 'next-redux-saga'
+
 // next-redux-wrapper는 provider로 감싸줄 필요가 없음
 
 const App = ({Component}) => {
@@ -22,6 +24,6 @@ App.propTypes = {
   Component: PropTypes.elementType.isRequired,
 }
 
-export default wrapper.withRedux(App)
+export default wrapper.withRedux(withReduxSaga(App))
 
 //공통적인 부분
