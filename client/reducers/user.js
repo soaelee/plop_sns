@@ -1,142 +1,158 @@
+import { NodeCollapseOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
+import produce from 'immer';
+
 export const initialState = {
   user: null,
 
   loginData: {},
   signupData: {},
-  
-  loginLoading: false, //로그인 시도중
+
+  loginLoading: false, // 로그인 시도중
   loginDone: false,
   loginError: null,
-  
-  logoutLoading: false, //로그아웃 시도중
+
+  logoutLoading: false, // 로그아웃 시도중
   logoutDone: false,
   logoutError: null,
-  
-  signupLoading: false, //회원가입 시도중
-  signupDone: false,
-  signupError: null
-}
 
-const dummyUser = data => ({
+  signupLoading: false, // 회원가입 시도중
+  signupDone: false,
+  signupError: null,
+
+  changeNicknameLoading: false,
+  changeNicknameDone: false,
+  changeNicknameError: null,
+};
+
+const dummyUser = (data) => ({
   ...data,
   nickname: 'soae',
   id: 1,
-  Posts: [],
-  Followings: [],
-  Followers: []
-})
-export const LOG_IN_REQUEST = 'LOG_IN_REQUEST'
-export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS'
-export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'
+  Posts: [{ id: 1 }],
+  Followings: [{ nickname: 'dalso' }, { nickname: 'jjagu' }],
+  Followers: [{ nickname: 'dalso' }, { nickname: 'jjagu' }],
+});
+export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
+export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
+export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 
-export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST'
-export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS'
-export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE'
+export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
+export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
+export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 
-export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST'
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS'
-export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE'
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
-export const FOLLOW_REQUEST = 'FOLLOW_REQUEST'
-export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS'
-export const FOLLOW_FAILURE = 'FOLLOW_FAILURE'
+export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
+export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
+export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 
-export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST'
-export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS'
-export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE'
+export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
+export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
+export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
-export const loginRequestAction = data => {
-  return {
-    type: LOG_IN_REQUEST,
-    data
-  }
-}
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+// 얘네는 컴포넌트에서 재사용할 일이 없으니까 action creator로 생성하지 않아도 됨
+export const ADD_POST_TO_USER = 'ADD_POST_TO_USER';
+export const REMOVE_POST_OF_USER = 'REMOVE_POST_OF_USER';
 
-export const logoutRequestAction = () => {
-  return {
-    type: LOG_OUT_REQUEST,
-  }
-}
+export const loginRequestAction = (data) => ({
+  type: LOG_IN_REQUEST,
+  data,
+});
 
-export const signupRequestAction = (data) => {
-  return {
-    type: SIGN_UP_REQUEST,
-    data
-  }
-}
+export const logoutRequestAction = () => ({
+  type: LOG_OUT_REQUEST,
+});
 
-const reducer = (state = initialState, action) => {
-  switch(action.type){
-    case LOG_IN_REQUEST: 
-      console.log('login reducer')
-      return {
-        ...state,
-        loginLoading: true,
-        loginError: null,
-        loginDone: false
-      }
+export const signupRequestAction = (data) => ({
+  type: SIGN_UP_REQUEST,
+  data,
+});
+
+export const changeNicknameRequestAction = (data) => ({
+  type: CHANGE_NICKNAME_REQUEST,
+  data,
+});
+
+const reducer = (state = initialState, action) => produce(state, (draft) => {
+  switch (action.type) {
+    case LOG_IN_REQUEST:
+      draft.loginLoading = true;
+      draft.loginDone = false;
+      draft.loginError = null;
+      break;
     case LOG_IN_SUCCESS:
-      return{
-        ...state,
-        loginLoading: false,
-        loginDone: true,
-        user: dummyUser(action.data),
-        loginError: null
-      }
+      draft.loginLoading = false;
+      draft.loginDone = true;
+      draft.loginError = null;
+      draft.user = dummyUser(action.data);
+      break;
     case LOG_IN_FAILURE:
-      return{
-        ...state,
-        loginLoading: false,
-        loginDone: false,
-        loginErrorr: action.error
-      }
+      draft.loginLoading = false;
+      draft.loginDone = false;
+      draft.loginError = action.error;
+      break;
     case LOG_OUT_REQUEST:
-      return {
-        ...state,
-        logoutLoading: true,
-        logoutError: null,
-        loginDone: false
-      }
+      draft.logoutLoading = true;
+      draft.logoutDone = false;
+      draft.logoutError = null;
+      break;
     case LOG_OUT_SUCCESS:
-      return{
-        ...state,
-        logoutLoading : false,
-        logoutDone: false,
-        user: null,
-        logoutError: null
-      }
-    case LOG_OUT_FAILURE :
-      return{
-        ...state,
-        logoutLoading: false,
-        logoutError: action.error,
-        logoutDone: false
-      }
+      draft.logoutLoading = false;
+      draft.logoutDone = true;
+      draft.logoutError = null;
+      draft.user = null;
+      break;
+    case LOG_OUT_FAILURE:
+      draft.logoutLoading = false;
+      draft.logoutDone = false;
+      draft.logoutError = action.error;
+      break;
     case SIGN_UP_REQUEST:
-      console.log('reducer')
-      return{
-        ...state,
-        signupLoading: true,
-        signupDone: false,
-        signupError: null
-      }
+      draft.signupLoading = true;
+      draft.signupDone = false;
+      draft.signupError = null;
+      break;
     case SIGN_UP_SUCCESS:
-      return{
-        ...state,
-        signupLoading: false,
-        signupDone: true,
-        signupData: action.data
-      }
+      draft.signupLoading = false;
+      draft.signupDone = true;
+      draft.signupError = null;
+      draft.signupData = action.data;
+      break;
     case SIGN_UP_FAILURE:
-      return {
-        ...state,
-        signupDone: false,
-        signupLoading: false,
-        signupError: action.error
-      }
-    default:
-      return state
+      draft.signupLoading = false;
+      draft.signupDone = false;
+      draft.signupError = action.error;
+      break;
+    case CHANGE_NICKNAME_REQUEST:
+      draft.changeNicknameLoading = true;
+      draft.changeNicknameDone = false;
+      draft.changeNicknameError = null;
+      break;
+    case CHANGE_NICKNAME_SUCCESS:
+      draft.changeNicknameLoading = false;
+      draft.changeNicknameDone = true;
+      draft.changeNicknameError = null;
+      break;
+    case CHANGE_NICKNAME_FAILURE:
+      draft.changeNicknameLoading = false;
+      draft.changeNicknameDone = false;
+      draft.changeNicknameError = action.error;
+      break;
+    case ADD_POST_TO_USER:
+      draft.user.Posts.unshift({ id: action.data });
+      break;
+    case REMOVE_POST_OF_USER:
+      console.log(action.data);
+      draft.user.Posts = draft.user.Posts.filter((post) => post.id !== action.data);
+      break;
+    default: break;
   }
-}
+});
 
-export default reducer
+export default reducer;

@@ -1,4 +1,6 @@
-//dummy data
+import shortId from 'shortid';
+import produce from 'immer';
+// dummy data
 
 export const initialState = {
   mainPosts: [{
@@ -9,23 +11,29 @@ export const initialState = {
     },
     content: 'First Content #Hash #Tag',
     Images: [{
-      src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg'
-    },{
-      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg'
-    },{
-      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg'
+      id: shortId.generate(),
+      src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg',
+    }, {
+      id: shortId.generate(),
+      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
+    }, {
+      id: shortId.generate(),
+      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
     }],
     Comments: [{
+      id: shortId.generate(),
       User: {
-        nickname: 'nero'
+        id: shortId.generate(),
+        nickname: 'nero',
       },
-      content: 'Wow! cool!!!!'
-    },{
+      content: 'Wow! cool!!!!',
+    }, {
       User: {
-        nickname: 'babo'
+        id: shortId.generate(),
+        nickname: 'babo',
       },
-      content: 'nice'
-    }]
+      content: 'nice',
+    }],
   }],
   imagePaths: [],
   addPostLoading: false,
@@ -33,91 +41,117 @@ export const initialState = {
   addPostError: null,
   addCommentLoading: false,
   addCommentDone: false,
-  addCommentError: null
-}
+  addCommentError: null,
+  removePostLoading: false,
+  removePostDone: false,
+  removePostError: null,
+};
 
-const dummyPost = {
-  id: 2,
-  content: 'dummy data',
+const dummyComment = (data) => ({
+  id: data.postId,
+  content: data.content,
+  User: {
+    id: data.userId,
+    nickname: 'jjagu',
+  },
+});
+
+const dummyPost = (data) => ({
+  id: data.id,
+  content: data.content,
   User: {
     id: 1,
-    nickname: 'JJAGU'
+    nickname: 'JJAGU',
   },
   Images: [],
-  Comments: []
-}
+  Comments: [],
+});
 
-export const ADD_POST_REQUEST = 'ADD_POST_REQUEST'
-export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS'
-export const ADD_POST_FAILURE = 'ADD_POST_FAILURE'
+export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
+export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
+export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
-export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
-export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
-export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
-export const addPostRequestAction = (data) => {
-  return {
-    type: ADD_POST_REQUEST,
-    data
-  }
-}
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
-export const addCommentRequestAction = (data) => {
-  console.log('commentreducer')
-  return {
-    type: ADD_COMMENT_REQUEST,
-    data
-  }
-}
+export const addPostRequestAction = (data) => ({
+  type: ADD_POST_REQUEST,
+  data,
+});
 
-const reducer = (state = initialState, action) => {
-  switch(action.type){
+export const addCommentRequestAction = (data) => ({
+  type: ADD_COMMENT_REQUEST,
+  data,
+});
+
+export const removePostRequestAction = (data) => ({
+  type: REMOVE_POST_REQUEST,
+  data,
+});
+
+// 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
+const reducer = (state = initialState, action) => produce(state, (draft) => {
+  // state가 draft됨
+  switch (action.type) {
     case ADD_POST_REQUEST:
-      return {
-        ...state,
-        addPostLoading: true,
-        addPostDone: false,
-        addPostError: null
-      }
+      draft.addPostLoading = true;
+      draft.addPostError = null;
+      draft.addPostDone = false;
+      break;
     case ADD_POST_SUCCESS:
-      return {
-        ...state,
-        mainPosts: [dummyPost, ...state.mainPosts],
-        addPostLoading: false,
-        addPostDone: true,
-        addPostError: null
-      }
+      draft.addPostLoading = false;
+      draft.addPostError = null;
+      draft.addPostDone = true;
+      draft.mainPosts.unshift(dummyPost(action.data));
+      break;
     case ADD_POST_FAILURE:
-      return{
-        ...state,
-        addPostLoading: false,
-        addPostDone: false,
-        addPostError: data.error
-      }
+      draft.addPostLoading = false;
+      draft.addPostError = action.error;
+      draft.addPostDone = false;
+      break;
     case ADD_COMMENT_REQUEST:
-      return{
-        ...state,
-        addCommentLoading: true,
-        addCommentDone: false,
-        addCommentError: null
-      }
-    case ADD_COMMENT_SUCCESS:
-      return{
-        ...state,
-        addCommentLoading: false,
-        addCommentDone: true,
-        addCommentError: null
-      }
+      draft.addCommentLoading = true;
+      draft.addCommentError = null;
+      draft.addCommentDone = false;
+      break;
+    case ADD_COMMENT_SUCCESS: {
+      // 메인포스트 중에 해당포스트를 찾아 참조변수에 담음, 해당 변수의 코멘트에 맨 앞에다가 더미 데이터를 더해줌
+      const foundPost = draft.mainPosts.find(((post) => post.id === action.data.postId));
+      foundPost.Comments.unshift(dummyComment(action.data));
+      draft.addCommentLoading = false;
+      draft.addCommentError = null;
+      draft.addCommentDone = true;
+      break;
+    }
     case ADD_COMMENT_FAILURE:
-      return{
-        ...state,
-        addCommentLoading: false,
-        addCommentDone: false,
-        addCommentError: action.error
-      }
+      draft.addCommentLoading = false;
+      draft.addCommentError = action.null;
+      draft.addCommentDone = false;
+      break;
+    case REMOVE_POST_REQUEST:
+      draft.removePostLoading = true;
+      draft.removePostDone = false;
+      draft.removePostError = null;
+      break;
+    case REMOVE_POST_SUCCESS:
+      draft.removePostLoading = false;
+      draft.removePostDone = true;
+      draft.removePostError = null;
+      draft.mainPosts = draft.mainPosts.filter((post) => post.id !== action.data);
+      break;
+    case REMOVE_POST_FAILURE:
+      draft.removePostLoading = false;
+      draft.removePostDone = false;
+      draft.removePostError = action.error;
+      break;
     default:
-      return state
+      break;
   }
-}
+});
 
-export default reducer
+export default reducer;

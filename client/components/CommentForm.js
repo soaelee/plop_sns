@@ -10,19 +10,20 @@ const CommentForm = ({ post }) => {
   const { addCommentDone } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user?.id);
-
+  const { addCommentLoading } = useSelector((state) => state.post);
   useEffect(() => {
     if (addCommentDone) {
       commentText.resetValue();
     }
   }, [addCommentDone]);
+
   const onSubmitComment = useCallback(() => {
-    console.log('hi');
     const body = {
       content: commentText.value,
       postId: post.id,
       userId: user,
     };
+    console.log(body);
     dispatch(addCommentRequestAction(body));
   }, [commentText.value, user]);
 
@@ -38,6 +39,8 @@ const CommentForm = ({ post }) => {
       <Button
         type="primary"
         htmlType="submit"
+        style={{ position: 'absolute', right: 0, bottom: -40, zIndex: 1 }}
+        loading={addCommentLoading}
       >
         PLOP!
 

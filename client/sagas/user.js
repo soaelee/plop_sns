@@ -1,69 +1,69 @@
 import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
 import {
-  LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, 
-  LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, 
-  FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE, 
-  UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE, 
-  SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE} from '../reducers/user'
+  LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE,
+  LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE,
+  FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE,
+  UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE,
+  SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE } from '../reducers/user';
 
-function* logout(action){
-  try{
+function* logout(action) {
+  try {
     // const res = yield call(logoutAPI, action.data)
-    yield delay(1000)
+    yield delay(1000);
     yield put({
       type: LOG_OUT_SUCCESS,
-      data: action.data
-    })
-  } catch (err){
-      yield put({
-        type: LOG_OUT_FAILURE,
-        error: err.response.data
-      })
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOG_OUT_FAILURE,
+      error: err.response.data,
+    });
   }
 }
 
-function* login(action){
-  try{
+function* login(action) {
+  try {
     // const res = yield call(loginAPI, action.data)
-    console.log('login sage')
-    yield delay(1000)
+    console.log('login sage');
+    yield delay(1000);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data
-    })
-  } catch (err){
+      data: action.data,
+    });
+  } catch (err) {
     yield put({
       type: LOG_IN_FAILURE,
-      error: err.response.data
-    })
+      error: err.response.data,
+    });
   }
 }
 
-function* signup(action){
-  try{
-    console.log('saga')
-    yield delay(1000)
+function* signup(action) {
+  try {
+    console.log('saga');
+    yield delay(1000);
     yield put({
       type: SIGN_UP_SUCCESS,
-      data: action.data
-    })
+      data: action.data,
+    });
   } catch (err) {
     yield put({
       type: SIGN_UP_FAILURE,
-      error: err.response.data
-    })
+      error: err.response.data,
+    });
   }
 }
-function* watchLogout(){
-  yield takeLatest(LOG_OUT_REQUEST, logout)
+function* watchLogout() {
+  yield takeLatest(LOG_OUT_REQUEST, logout);
 }
 
 function* watchLogin() {
-  yield takeLatest(LOG_IN_REQUEST, login)
+  yield takeLatest(LOG_IN_REQUEST, login);
 }
 
-function* watchSignup(){
-  yield takeLatest(SIGN_UP_REQUEST, signup)
+function* watchSignup() {
+  yield takeLatest(SIGN_UP_REQUEST, signup);
 }
 
 export default function* userSaga() {
@@ -71,5 +71,5 @@ export default function* userSaga() {
     fork(watchLogin),
     fork(watchLogout),
     fork(watchSignup),
-  ])
+  ]);
 }

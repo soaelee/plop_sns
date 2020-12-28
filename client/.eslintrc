@@ -29,6 +29,11 @@
     "react/jsx-one-expression-per-line": "off",
     "linebreak-style": 0,
     "jsx-a11y/label-has-associated-control": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/jsx-props-no-spreading": "off",
+    "no-unused-vars": "off",
+    "consistent-return": "off",
+    "no-restricted-globals": "off",
+    "no-param-reassign": "off"
   }
 }
