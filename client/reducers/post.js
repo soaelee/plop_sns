@@ -4,38 +4,7 @@ import faker from 'faker';
 // dummy data
 
 export const initialState = {
-  mainPosts: [{
-    id: 1,
-    User: {
-      id: 1,
-      nickname: 'JJAGU',
-    },
-    content: 'First Content #Hash #Tag',
-    Images: [{
-      id: shortId.generate(),
-      src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg',
-    }, {
-      id: shortId.generate(),
-      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
-    }, {
-      id: shortId.generate(),
-      src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
-    }],
-    Comments: [{
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: 'nero',
-      },
-      content: 'Wow! cool!!!!',
-    }, {
-      User: {
-        id: shortId.generate(),
-        nickname: 'babo',
-      },
-      content: 'nice',
-    }],
-  }],
+  mainPosts: [],
   imagePaths: [],
   addPostLoading: false,
   addPostDone: false,
@@ -46,10 +15,16 @@ export const initialState = {
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
+  hasMorePosts: true,
 };
 
-initialState.mainPosts = initialState.mainPosts.concat(
-  Array(20).fill().map(() => ({
+// react-virtualized 한번 사용해보자! (infiniteloader사용해서)
+export const generateDummyPost = (number) => (
+
+  Array(number).fill().map(() => ({
     id: shortId.generate(),
     User: {
       id: shortId.generate(),
@@ -57,7 +32,7 @@ initialState.mainPosts = initialState.mainPosts.concat(
     },
     content: faker.lorem.paragraph(),
     Images: [{
-      src: faker.image.imageUrl(),
+      src: faker.image.image(),
     }],
     Comments: [{
       User: {
@@ -66,7 +41,8 @@ initialState.mainPosts = initialState.mainPosts.concat(
       },
       content: faker.lorem.sentence(),
     }],
-  })),
+  }))
+
 );
 
 const dummyComment = (data) => ({
@@ -93,6 +69,10 @@ export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
@@ -114,6 +94,10 @@ export const addCommentRequestAction = (data) => ({
 export const removePostRequestAction = (data) => ({
   type: REMOVE_POST_REQUEST,
   data,
+});
+
+export const loadPostRequesstAction = () => ({
+  type: LOAD_POST_REQUEST,
 });
 
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
@@ -171,9 +155,60 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.removePostDone = false;
       draft.removePostError = action.error;
       break;
+    case LOAD_POST_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_POST_SUCCESS:
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.loadPostError = null;
+      draft.mainPosts = action.data.concat(draft.mainPosts);
+      draft.hasMorePosts = draft.mainPosts.length < 50;
+      // 50개보다 많아지면 false, 안가져오겠다!
+      break;
+    case LOAD_POST_FAILURE:
+      draft.loadPostLoading = false;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
     default:
       break;
   }
 });
 
 export default reducer;
+
+// {
+//   id: 1,
+//   User: {
+//     id: 1,
+//     nickname: 'JJAGU',
+//   },
+//   content: 'First Content #Hash #Tag',
+//   Images: [{
+//     id: shortId.generate(),
+//     src: 'https://img6.yna.co.kr/photo/cms/2019/05/02/02/PCM20190502000402370_P4.jpg',
+//   }, {
+//     id: shortId.generate(),
+//     src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
+//   }, {
+//     id: shortId.generate(),
+//     src: 'https://spnimage.edaily.co.kr/images/photo/files/NP/S/2020/10/PS20100800026.jpg',
+//   }],
+//   Comments: [{
+//     id: shortId.generate(),
+//     User: {
+//       id: shortId.generate(),
+//       nickname: 'nero',
+//     },
+//     content: 'Wow! cool!!!!',
+//   }, {
+//     User: {
+//       id: shortId.generate(),
+//       nickname: 'babo',
+//     },
+//     content: 'nice',
+//   }],
+// }
