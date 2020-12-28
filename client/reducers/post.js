@@ -1,5 +1,6 @@
 import shortId from 'shortid';
 import produce from 'immer';
+import faker from 'faker';
 // dummy data
 
 export const initialState = {
@@ -46,6 +47,27 @@ export const initialState = {
   removePostDone: false,
   removePostError: null,
 };
+
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20).fill().map(() => ({
+    id: shortId.generate(),
+    User: {
+      id: shortId.generate(),
+      nickname: faker.name.findName(),
+    },
+    content: faker.lorem.paragraph(),
+    Images: [{
+      src: faker.image.imageUrl(),
+    }],
+    Comments: [{
+      User: {
+        id: shortId.generate(),
+        nickname: faker.name.findName(),
+      },
+      content: faker.lorem.sentence(),
+    }],
+  })),
+);
 
 const dummyComment = (data) => ({
   id: data.postId,
