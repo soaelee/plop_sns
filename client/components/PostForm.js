@@ -1,21 +1,25 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useEffect } from 'react'
 import {Form, Input, Button} from 'antd'
 import useInput from '../hooks/useInput'
 import {useSelector, useDispatch} from 'react-redux'
-import { addPost } from '../reducers/post'
+import { addPostRequestAction } from '../reducers/post'
+
 const PostForm = () => {
 
-  const {imagePaths} = useSelector((state) => state.post)
+  const {imagePaths, addPostDone} = useSelector((state) => state.post)
   const dispatch = useDispatch()
   
   const imageInput = useRef()
-  const textAreaInput = useRef()
 
+  useEffect(() => {
+    if(addPostDone) {
+      text.resetValue()
+    }
+  }, [addPostDone])
   const text = useInput('')
   const onSubmit = useCallback(() => {
     console.log('hi')
-    dispatch(addPost())
-    text.resetValue()
+    dispatch(addPostRequestAction(text.value))
   }, [])
 
   const onClickImageUpload = useCallback(() => {
@@ -28,8 +32,7 @@ const PostForm = () => {
         value={text.value} 
         onChange={text.handler} 
         maxLength={148} 
-        placeholder="오늘의 흥미로운 이야기를 던져주세요." 
-        ref={textAreaInput}  
+        placeholder="오늘의 흥미로운 이야기를 던져주세요."
       />
       <div>
         <input type="file" multiple hidden id="fileUpload" ref={imageInput}/>

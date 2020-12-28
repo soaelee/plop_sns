@@ -1,5 +1,10 @@
 import { all, delay, fork, put, takeLatest } from 'redux-saga/effects';
-import {LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE, SIGN_UP_SUCCESS, SIGN_UP_FAILURE} from '../reducers/user'
+import {
+  LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, 
+  LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, 
+  FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE, 
+  UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE, 
+  SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE} from '../reducers/user'
 
 function* logout(action){
   try{
@@ -36,6 +41,7 @@ function* login(action){
 
 function* signup(action){
   try{
+    console.log('saga')
     yield delay(1000)
     yield put({
       type: SIGN_UP_SUCCESS,
@@ -52,11 +58,11 @@ function* watchLogout(){
   yield takeLatest(LOG_OUT_REQUEST, logout)
 }
 
-function* watchLogin(action) {
+function* watchLogin() {
   yield takeLatest(LOG_IN_REQUEST, login)
 }
 
-function* watchSignup(action){
+function* watchSignup(){
   yield takeLatest(SIGN_UP_REQUEST, signup)
 }
 
@@ -64,6 +70,6 @@ export default function* userSaga() {
   yield all([
     fork(watchLogin),
     fork(watchLogout),
-    fork(watchSignup)
+    fork(watchSignup),
   ])
 }

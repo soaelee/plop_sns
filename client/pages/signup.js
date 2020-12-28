@@ -5,21 +5,28 @@ import { Form, Input, Checkbox, Button } from 'antd'
 import useInput from '../hooks/useInput'
 import styled from 'styled-components'
 
+import { useDispatch, useSelector } from 'react-redux'
+import { signupRequestAction } from '../reducers/user'
+
 const ErrorMessage = styled.div`
   color: red;
 `
 const Signup = () => {
 
-  const id = useInput('')
+  const {signupLoading} = useSelector((state) => state.user)
+
+  const dispatch = useDispatch()
+
+  const email = useInput('')
   const password = useInput('')
   const nickname = useInput('')
-
 
   const [passwordCheck, setPasswordCheck] = useState('')
   const [passwordError, setPasswordError] = useState(false)
 
   const [term, setTerm] = useState(false)
   const [termError, setTermError] = useState(false)
+
   const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked)
     console.log(e.target.checked)
@@ -31,14 +38,22 @@ const Signup = () => {
     setPasswordError(e.target.value !== password.value);
   }, [password.value])
 
-  const onSubmit = useCallback(() => {
+  const onSubmitForm = useCallback(() => {
     if(password.value !== passwordCheck) {
       return setPasswordError(true)
     }
     if(!term){
       return setTermError(true)
     }
-    console.log(id.value, nickname.value, password.value)
+
+    const data = {
+      email: email.value,
+      password: password.value,
+      nickname: nickname.value
+    }
+    console.log("hi");
+    dispatch(signupRequestAction(data))
+
   }, [password.value, passwordCheck, term])
   
   return (
@@ -47,11 +62,11 @@ const Signup = () => {
         <title>Signup | Plop</title>
       </Head>
       <AppLayout>
-        <Form onFinish={onSubmit}>
+        <Form onFinish={onSubmitForm}>
           <div>
-            <label htmlFor="user_id">아이디</label>
+            <label htmlFor="user_email">이메일</label>
             <br/>
-            <Input name="user_id" required value={id.value} onChange={id.handler}/>
+            <Input name="user_email" type="email" required value={email.value} onChange={email.handler}/>
           </div>
           <div>
             <label htmlFor="user_nickname">닉네임</label>
@@ -80,7 +95,7 @@ const Signup = () => {
             {termError && <ErrorMessage style={{color: 'red'}}>약관에 동의하셔야 합니다.</ErrorMessage>}
           </div>
           <div style={{marginTop: 10}}>
-            <Button type="primary" htmlType="submit">가입하기</Button>
+            <Button type="primary" htmlType="submit" loading={signupLoading}>가입하기</Button>
           </div>
         </Form>
       </AppLayout>

@@ -63,6 +63,7 @@ export const addPostRequestAction = (data) => {
 }
 
 export const addCommentRequestAction = (data) => {
+  console.log('commentreducer')
   return {
     type: ADD_COMMENT_REQUEST,
     data

@@ -58,6 +58,13 @@ export const logoutRequestAction = () => {
   }
 }
 
+export const signupRequestAction = (data) => {
+  return {
+    type: SIGN_UP_REQUEST,
+    data
+  }
+}
+
 const reducer = (state = initialState, action) => {
   switch(action.type){
     case LOG_IN_REQUEST: 
@@ -87,26 +94,26 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         logoutLoading: true,
-        logoutDone: false,
-        logoutError: null
+        logoutError: null,
+        loginDone: false
       }
     case LOG_OUT_SUCCESS:
       return{
         ...state,
         logoutLoading : false,
-        logoutDone: true,
+        logoutDone: false,
         user: null,
         logoutError: null
       }
-    case LOG_OUT_FAILURE:
+    case LOG_OUT_FAILURE :
       return{
         ...state,
         logoutLoading: false,
         logoutError: action.error,
         logoutDone: false
       }
-
     case SIGN_UP_REQUEST:
+      console.log('reducer')
       return{
         ...state,
         signupLoading: true,
