@@ -1,12 +1,12 @@
-import React from 'react'
-import Link from 'next/link'
-import PropTypes from 'prop-types'
-import { Menu, Input, Row, Col } from 'antd'
-import LoginForm from './LoginForm'
-import UserProfile from './UserProfile'
-import styled from 'styled-components'
-import { useSelector } from 'react-redux'
-import { createGlobalStyle } from 'styled-components'
+import React from 'react';
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import { Menu, Input, Row, Col } from 'antd';
+import styled, { createGlobalStyle } from 'styled-components';
+import { useSelector } from 'react-redux';
+
+import UserProfile from './UserProfile';
+import LoginForm from './LoginForm';
 
 const Global = createGlobalStyle`
   .ant-row{
@@ -21,12 +21,12 @@ const Global = createGlobalStyle`
   .ant-col:last-child {
     padding-right: 0 !important;
   }
-`
+`;
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
-`
-const AppLayout = ({children}) => {
-  //dummy data
+`;
+const AppLayout = ({ children }) => {
+  // dummy data
   // const [isLogin, setIsLogin] = useState(false);
 
   const { user } = useSelector((state) => state.user);
@@ -45,7 +45,7 @@ const AppLayout = ({children}) => {
           <SearchInput enterButton />
         </Menu.Item>
         <Menu.Item>
-          <Link href="/signup"><a>회원가입</a></Link>  
+          <Link href="/signup"><a>회원가입</a></Link>
         </Menu.Item>
       </Menu>
       <Row gutter={8}>
@@ -58,20 +58,20 @@ const AppLayout = ({children}) => {
           {children}
         </Col>
         <Col xs={24} sm={24} md={6}>
-          <a 
-            href="https://soae.jjagu.com" 
-            target="_blank" 
+          <a
+            href="https://soae.jjagu.com"
+            target="_blank"
             rel="noreferrer noopener"
           >
             Made by SoaeLee
           </a>
         </Col>
-      </Row>      
+      </Row>
     </div>
-  )
-}
+  );
+};
 
 AppLayout.propTypes = {
-  children: PropTypes.node.isRequired
-}
-export default AppLayout
+  children: PropTypes.node.isRequired,
+};
+export default AppLayout;

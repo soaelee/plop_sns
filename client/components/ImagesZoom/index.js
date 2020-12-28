@@ -7,7 +7,7 @@ const ImagesZoom = ({ images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const onKeyUpHandler = useCallback((e) => {
-    if(e.key === `Escape`){
+    if (e.key === 'Escape') {
       onClose();
     }
   }, []);
