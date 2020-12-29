@@ -1,10 +1,16 @@
 const express = require('express');
 const postRouter = require('./routes/post');
-
+const db = require('./models');
 const app = express();
 
+db.sequelize.sync()
+  .then(() => {
+    console.log('🐹db🚀');
+  })
+  .catch((err) => console.log(err));
+
 app.get('/', (req, res) => {
-  res.send('hello express');
+  res.send('🐶메롱');
 })
 
 app.get('/api', (req, res) => {
