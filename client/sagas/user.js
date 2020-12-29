@@ -24,8 +24,7 @@ function* logout(action) {
 
 function* login(action) {
   try {
-    // const res = yield call(loginAPI, action.data)
-    console.log('login sage');
+    // const res = yield call(loginAPI, action.data)ㅎ
     yield delay(1000);
     yield put({
       type: LOG_IN_SUCCESS,
@@ -54,6 +53,36 @@ function* signup(action) {
     });
   }
 }
+
+function* follow(action) {
+  try {
+    yield delay(1000);
+    yield put({
+      type: FOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: FOLLOW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function* unfollow(action) {
+  try {
+    yield delay(1000);
+    yield put({
+      type: UNFOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UNFOLLOW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 function* watchLogout() {
   yield takeLatest(LOG_OUT_REQUEST, logout);
 }
@@ -66,10 +95,19 @@ function* watchSignup() {
   yield takeLatest(SIGN_UP_REQUEST, signup);
 }
 
+function* watchFollow() {
+  yield takeLatest(FOLLOW_REQUEST, follow);
+}
+
+function* watchUnfollow() {
+  yield takeLatest(UNFOLLOW_REQUEST, unfollow);
+}
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
     fork(watchLogout),
     fork(watchSignup),
+    fork(watchFollow),
+    fork(watchUnfollow),
   ]);
 }

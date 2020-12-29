@@ -23,6 +23,15 @@ export const initialState = {
   changeNicknameLoading: false,
   changeNicknameDone: false,
   changeNicknameError: null,
+
+  followLoading: false,
+  followDone: false,
+  followError: null,
+
+  unfollowLoading: false,
+  unfollowDone: false,
+  unfollowError: null,
+
 };
 
 const dummyUser = (data) => ({
@@ -30,8 +39,8 @@ const dummyUser = (data) => ({
   nickname: 'soae',
   id: 1,
   Posts: [{ id: 1 }],
-  Followings: [{ nickname: 'dalso' }, { nickname: 'jjagu' }],
-  Followers: [{ nickname: 'dalso' }, { nickname: 'jjagu' }],
+  Followings: [{ id: 'dalso' }, { id: 'jjagu' }],
+  Followers: [{ id: 'dalso' }, { id: 'jjagu' }],
 });
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -56,6 +65,7 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
 export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+
 // 얘네는 컴포넌트에서 재사용할 일이 없으니까 action creator로 생성하지 않아도 됨
 export const ADD_POST_TO_USER = 'ADD_POST_TO_USER';
 export const REMOVE_POST_OF_USER = 'REMOVE_POST_OF_USER';
@@ -79,6 +89,15 @@ export const changeNicknameRequestAction = (data) => ({
   data,
 });
 
+export const followRequestAction = (data) => ({
+  type: FOLLOW_REQUEST,
+  data,
+});
+
+export const unfollowRequestAction = (data) => ({
+  type: UNFOLLOW_REQUEST,
+  data,
+});
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOG_IN_REQUEST:
@@ -150,6 +169,38 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case REMOVE_POST_OF_USER:
       console.log(action.data);
       draft.user.Posts = draft.user.Posts.filter((post) => post.id !== action.data);
+      break;
+    case FOLLOW_REQUEST:
+      draft.followLoading = true;
+      draft.followDone = false;
+      draft.followError = null;
+      break;
+    case FOLLOW_SUCCESS:
+      draft.followLoading = false;
+      draft.followDone = true;
+      draft.followError = null;
+      draft.user.Followings.push({ id: action.data });
+      break;
+    case FOLLOW_FAILURE:
+      draft.followLoading = false;
+      draft.followDone = false;
+      draft.followError = action.error;
+      break;
+    case UNFOLLOW_REQUEST:
+      draft.unfollowLoading = true;
+      draft.unfollowDone = false;
+      draft.unfollowError = null;
+      break;
+    case UNFOLLOW_SUCCESS:
+      draft.unfollowLoading = false;
+      draft.unfollowDone = true;
+      draft.unfollowError = null;
+      draft.user.Followings = draft.user.Followings.filter((f) => f.id !== action.data);
+      break;
+    case UNFOLLOW_FAILURE:
+      draft.unfollowLoading = false;
+      draft.unfollowDone = false;
+      draft.unfollowError = action.error;
       break;
     default: break;
   }
