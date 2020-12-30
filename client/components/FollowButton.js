@@ -8,7 +8,7 @@ const FollowButton = ({ post }) => {
   const dispatch = useDispatch();
   const [follow, setFollow] = useState(true);
   const { user, followLoading, unfollowLoading } = useSelector((state) => state.user);
-  const isFollowing = user?.Followings.find((v) => v.id === post.User.id);
+  const isFollowing = user?.Followings?.find((v) => v.id === post.User.id);
 
   const onClickButton = useCallback(() => {
     if (isFollowing) {
@@ -19,7 +19,7 @@ const FollowButton = ({ post }) => {
   });
 
   useEffect(() => {
-    user.Followers.forEach((follower) => {
+    user.Followers?.forEach((follower) => {
       if (follower.nickname === post.User.nickname) {
         setFollow(false);
       }

@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import { Form, Input, Checkbox, Button } from 'antd';
 import styled from 'styled-components';
-
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import AppLayout from '../components/AppLayout';
@@ -12,8 +12,20 @@ const ErrorMessage = styled.div`
   color: red;
 `;
 const Signup = () => {
-  const { signupLoading } = useSelector((state) => state.user);
+  const { signupLoading, signupDone, signupError } = useSelector((state) => state.user);
+  const router = useRouter();
 
+  useEffect(() => {
+    if (signupDone) {
+      router.push('/');
+    }
+  }, [signupDone]);
+
+  useEffect(() => {
+    if (signupError) {
+      alert(signupError);
+    }
+  });
   const dispatch = useDispatch();
 
   const email = useInput('');
@@ -28,7 +40,6 @@ const Signup = () => {
 
   const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked);
-    console.log(e.target.checked);
     setTermError(false);
   }, []);
 
@@ -50,7 +61,6 @@ const Signup = () => {
       password: password.value,
       nickname: nickname.value,
     };
-    console.log('hi');
     dispatch(signupRequestAction(data));
   }, [password.value, passwordCheck, term]);
 

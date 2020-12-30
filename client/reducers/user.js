@@ -42,6 +42,7 @@ const dummyUser = (data) => ({
   Followings: [{ id: 'dalso' }, { id: 'jjagu' }],
   Followers: [{ id: 'dalso' }, { id: 'jjagu' }],
 });
+
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -109,7 +110,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loginLoading = false;
       draft.loginDone = true;
       draft.loginError = null;
-      draft.user = dummyUser(action.data);
+      draft.user = action.data;
       break;
     case LOG_IN_FAILURE:
       draft.loginLoading = false;
