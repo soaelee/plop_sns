@@ -23,7 +23,7 @@ passportConfig();
 
 app.use(cors({
   origin: 'http://localhost:3000',
-  credentials: false, //나중에 true로
+  credentials: true, //나중에 true로
 }));
 
 // app.use(cors({
@@ -48,6 +48,7 @@ app.get('/', (req, res) => {
 
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+
 app.listen(3065, () => {
   console.log('🐶server🚀');
 })

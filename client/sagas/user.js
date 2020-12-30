@@ -13,8 +13,7 @@ function logoutAPI(data) {
 
 function* logout(action) {
   try {
-    const res = yield call(logoutAPI, action.data);
-    console.log(res.data);
+    yield call(logoutAPI, action.data);
     yield put({
       type: LOG_OUT_SUCCESS,
     });

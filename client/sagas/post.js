@@ -1,4 +1,5 @@
-import { all, delay, fork, put, takeLatest, throttle } from 'redux-saga/effects';
+import axios from 'axios';
+import { all, call, delay, fork, put, takeLatest, throttle } from 'redux-saga/effects';
 import shortId from 'shortid';
 import {
   ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE,
@@ -8,21 +9,25 @@ import {
 } from '../reducers/post';
 import { ADD_POST_TO_USER, REMOVE_POST_OF_USER } from '../reducers/user';
 
+function addPostAPI(data) {
+  return axios.post('/post', { content: data });
+}
+
 function* addPost(action) {
   try {
     // const res = yield call(loginAPI, action.data)
     const id = shortId.generate();
-    yield delay(1000);
+    const res = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
       data: {
         id,
-        content: action.data,
+        content: res.data,
       },
     });
     yield put({
       type: ADD_POST_TO_USER,
-      data: id,
+      data: res.data.id,
     });
   } catch (err) {
     yield put({
@@ -32,12 +37,17 @@ function* addPost(action) {
   }
 }
 
+function addCommentAPI(data) {
+  return axios.post(`/post/${data.postId}/comment`, data);
+  // 1번 게시글의 댓글 => post/1/comment
+}
+// content, postId, userId
 function* addComment(action) {
   try {
-    yield delay(1000);
+    const res = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: action.data,
+      data: res.data,
     });
   } catch (err) {
     yield put({

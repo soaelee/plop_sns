@@ -44,9 +44,12 @@ const AppLayout = ({ children }) => {
         <Menu.Item>
           <SearchInput enterButton />
         </Menu.Item>
+        { !user?.id
+        && (
         <Menu.Item>
           <Link href="/signup"><a>회원가입</a></Link>
         </Menu.Item>
+        )}
       </Menu>
       <Row gutter={8}>
         {/* Column간의 Padding : 8px */}

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import { Form, Input, Checkbox, Button } from 'antd';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import AppLayout from '../components/AppLayout';
@@ -12,12 +12,18 @@ const ErrorMessage = styled.div`
   color: red;
 `;
 const Signup = () => {
-  const { signupLoading, signupDone, signupError } = useSelector((state) => state.user);
+  const { signupLoading, signupDone, signupError, user } = useSelector((state) => state.user);
   const router = useRouter();
 
   useEffect(() => {
+    if (user && user.id) {
+      router.replace('/');
+    }
+  }, [user && user.id]);
+
+  useEffect(() => {
     if (signupDone) {
-      router.push('/');
+      router.replace('/');
     }
   }, [signupDone]);
 

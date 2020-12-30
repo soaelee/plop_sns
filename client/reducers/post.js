@@ -113,7 +113,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.addPostLoading = false;
       draft.addPostError = null;
       draft.addPostDone = true;
-      draft.mainPosts.unshift(dummyPost(action.data));
+      draft.mainPosts.unshift(action.data);
       break;
     case ADD_POST_FAILURE:
       draft.addPostLoading = false;
@@ -127,8 +127,8 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       break;
     case ADD_COMMENT_SUCCESS: {
       // 메인포스트 중에 해당포스트를 찾아 참조변수에 담음, 해당 변수의 코멘트에 맨 앞에다가 더미 데이터를 더해줌
-      const foundPost = draft.mainPosts.find(((post) => post.id === action.data.postId));
-      foundPost.Comments.unshift(dummyComment(action.data));
+      const post = draft.mainPosts.find(((v) => v.id === action.data.PostId));
+      post.Comments.unshift(action.data);
       draft.addCommentLoading = false;
       draft.addCommentError = null;
       draft.addCommentDone = true;
@@ -136,7 +136,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     }
     case ADD_COMMENT_FAILURE:
       draft.addCommentLoading = false;
-      draft.addCommentError = action.null;
+      draft.addCommentError = action.error;
       draft.addCommentDone = false;
       break;
     case REMOVE_POST_REQUEST:
@@ -171,7 +171,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_POST_FAILURE:
       draft.loadPostLoading = false;
       draft.loadPostDone = false;
-      draft.loadPostError = null;
+      draft.loadPostError = action.error;
       break;
     default:
       break;

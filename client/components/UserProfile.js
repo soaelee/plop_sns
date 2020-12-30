@@ -15,17 +15,17 @@ const UserProfile = () => {
         <div key="plop">
           PLOP
           <br />
-          {user.Posts?.length}
+          {user.Posts.length}
         </div>,
         <div key="followings">
           팔로잉
           <br />
-          {user.Followings?.length}
+          {user.Followings.length}
         </div>,
         <div key="followers">
           팔로워
           <br />
-          {user.Followers?.length}
+          {user.Followers.length}
         </div>,
       ]}
     >

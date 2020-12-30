@@ -7,10 +7,16 @@ import { addCommentRequestAction } from '../reducers/post';
 
 const CommentForm = ({ post }) => {
   const commentText = useInput('');
-  const { addCommentDone } = useSelector((state) => state.post);
+  const { addCommentDone, addCommentLoading, addCommentError } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user?.id);
-  const { addCommentLoading } = useSelector((state) => state.post);
+
+  useEffect(() => {
+    if (addCommentError) {
+      alert(addCommentError);
+    }
+  }, [addCommentError]);
+
   useEffect(() => {
     if (addCommentDone) {
       commentText.resetValue();

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ const FormWrapper = styled(Form)`
 `;
 // Component에 Props로 넘겨주는 함수는 항상 useCallback을 사용한다.
 const LoginForm = () => {
-  const { loginLoading } = useSelector((state) => state.user);
+  const { loginLoading, loginError } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const email = useInput('');
   const password = useInput('');
@@ -29,6 +29,12 @@ const LoginForm = () => {
     };
     dispatch(loginRequestAction(data));
   }, [email.value, password.value]);
+
+  useEffect(() => {
+    if (loginError) {
+      return alert(loginError);
+    }
+  }, [loginError]);
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>
