@@ -19,9 +19,10 @@ const Profile = () => {
   }, [user]);
   // user 정보가 없으면 null 반환
   if (!user) {
-    alert('로그인이 필요한 기능입니다.');
+    console.log('로그인이 필요한 기능입니다.');
     return null;
   }
+
   return (
     <>
       <Head>

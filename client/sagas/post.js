@@ -25,10 +25,7 @@ function* addPost(action) {
     const res = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: {
-        id,
-        content: res.data,
-      },
+      data: res.data,
     });
     yield put({
       type: ADD_POST_TO_USER,
@@ -63,21 +60,25 @@ function* addComment(action) {
   }
 }
 
+function removePostAPI(data) {
+  return axios.delete(`/post/${data}`);
+}
+
 function* removePost(action) {
   try {
-    yield delay(1000);
+    const res = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: res.data,
     });
     yield put({
       type: REMOVE_POST_OF_USER,
-      data: action.data,
+      data: res.data,
     });
   } catch (err) {
     yield put({
       type: REMOVE_POST_FAILURE,
-      data: action.data,
+      data: err.response.data,
     });
   }
 }

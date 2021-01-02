@@ -105,6 +105,20 @@ router.post('/', isNotLoggedIn, async (req, res, next) => { // POST /user
     next(err); //status 500
   }
 })
+
+router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+  try{
+    User.update({
+      nickname: req.body.nickname,
+    }, {
+      where: {id: req.user.id},
+    });
+    res.status(200).json({nickname: req.body.nickname});
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+})
 module.exports = router;
 
 //200(201) 성공(유의미) 300 리다이렉트 400 클라이언트 에러 500 서버 에러
