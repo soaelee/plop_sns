@@ -20,8 +20,7 @@ function addPostAPI(data) {
 
 function* addPost(action) {
   try {
-    // const res = yield call(loginAPI, action.data)
-    const id = shortId.generate();
+    // const id = shortId.generate();
     const res = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,

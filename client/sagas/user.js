@@ -6,7 +6,11 @@ import {
   FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE,
   UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE,
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
-  LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE, CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_SUCCESS,
+  LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
+  CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_SUCCESS,
+  LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,
+  LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
+  REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS,
 } from '../reducers/user';
 
 function logoutAPI(data) {
@@ -66,12 +70,16 @@ function* signUp(action) {
   }
 }
 
+function followAPI(data) {
+  return axios.patch(`user/${data}/follow`);
+}
+
 function* follow(action) {
   try {
-    yield delay(1000);
+    const res = yield call(followAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
-      data: action.data,
+      data: res.data,
     });
   } catch (err) {
     yield put({
@@ -81,12 +89,16 @@ function* follow(action) {
   }
 }
 
+function unfollowAPI(data) {
+  return axios.delete(`user/${data}/follow`);
+}
+
 function* unfollow(action) {
   try {
-    yield delay(1000);
+    const res = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
-      data: action.data,
+      data: res.data,
     });
   } catch (err) {
     yield put({
@@ -99,7 +111,8 @@ function* unfollow(action) {
 function loadUserAPI() {
   return axios.get('/user');
 }
-function* loadUser(action) {
+
+function* loadUser() {
   try {
     const res = yield call(loadUserAPI);
     yield put({
@@ -134,6 +147,65 @@ function* changeNickname(action) {
   }
 }
 
+function loadFollowingsAPI() {
+  return axios.get('/user/followings');
+}
+
+function* loadFollowings() {
+  try {
+    const res = yield call(loadFollowingsAPI);
+    yield put({
+      type: LOAD_FOLLOWINGS_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_FOLLOWINGS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadFollowersAPI() {
+  return axios.get('/user/followers');
+}
+
+function* loadFollowers() {
+  try {
+    const res = yield call(loadFollowersAPI);
+    yield put({
+      type: LOAD_FOLLOWERS_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_FOLLOWERS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function removeFollowerAPI(data) {
+  return axios.delete(`/user/follower/${data}`);
+}
+
+function* removeFollower(action) {
+  try {
+    const res = yield call(removeFollowerAPI, action.data);
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 function* watchLogout() {
   yield takeLatest(LOG_OUT_REQUEST, logout);
 }
@@ -161,6 +233,18 @@ function* watchLoadUser() {
 function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
+
+function* watchloadFollowers() {
+  yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers);
+}
+
+function* watchloadFollowings() {
+  yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
+}
+
+function* watchRemoveFollower() {
+  yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -170,5 +254,8 @@ export default function* userSaga() {
     fork(watchUnfollow),
     fork(watchLoadUser),
     fork(watchChangeNickname),
+    fork(watchloadFollowers),
+    fork(watchloadFollowings),
+    fork(watchRemoveFollower),
   ]);
 }

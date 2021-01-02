@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import Head from 'next/head';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import AppLayout from '../components/AppLayout';
 import NicknameEditForm from '../components/NicknameEditForm';
 import FollowerList from '../components/FollowerList';
 import FollowList from '../components/FollowList';
+import { loadFollowingsRequestAction, loadFollowersRequestAction } from '../reducers/user';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,6 +19,11 @@ const Profile = () => {
       router.push('/');
     }
   }, [user]);
+
+  useEffect(() => {
+    dispatch(loadFollowersRequestAction());
+    dispatch(loadFollowingsRequestAction());
+  }, []);
   // user 정보가 없으면 null 반환
   if (!user) {
     console.log('로그인이 필요한 기능입니다.');
@@ -30,8 +37,8 @@ const Profile = () => {
       </Head>
       <AppLayout>
         <NicknameEditForm />
-        <FollowList header="팔로잉 목록" data={user.Followings} />
-        <FollowerList header="팔로워 목록" data={user.Followers} />
+        <FollowList header="팔로잉" data={user.Followings} />
+        <FollowList header="팔로워" data={user.Followers} />
       </AppLayout>
     </>
   );

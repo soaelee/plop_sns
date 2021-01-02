@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { User, Post } = require('../models');
 const passport = require('passport');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const user = require('../models/user');
 
 router.get('/', async(req, res, next) => { // GET /user
   try{
@@ -119,6 +120,77 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
     next(err);
   }
 })
+
+router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => { // PATCH /user/1/follow
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId }});
+    if (!user) {
+      res.status(403).send('존재하지 않는 유저는 팔로우 할 수 없습니다.');
+    }
+    await user.addFollowers(req.user.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => { // DELETE /user/1/follow
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId }});
+    if (!user) {
+      res.status(403).send('존재하지 않는 유저는 언팔로우 할 수 없습니다.');
+    }
+    await user.removeFollowers(req.user.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get('/followers', isLoggedIn, async (req, res, next) => { // GET /user/followers
+  try {
+    const user = await User.findOne({ where: { id: req.user.id }});
+    if (!user) {
+      res.status(403).send('팔로우 유저가 없습니다.');
+    }
+    const followers = await user.getFollowers();
+    res.status(200).json(followers);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get('/followings', isLoggedIn, async (req, res, next) => { // GET /user/followings
+  try {
+    const user = await User.findOne({ where: { id: req.user.id }});
+    if (!user) {
+      res.status(403).send('팔로잉한 유저가 없습니다.');
+    }
+    const followings = await user.getFollowings();
+    res.status(200).json(followings);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => { // DELETE /user/follower/2
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId }});
+    if (!user) {
+      res.status(403).send('차단할 유저가 없습니다.');
+    }
+    await user.removeFollowings(req.params.userId);
+    res.status(200).json({UserId: parseInt(req.params.userId, 10)});
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;
 
 //200(201) 성공(유의미) 300 리다이렉트 400 클라이언트 에러 500 서버 에러
