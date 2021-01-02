@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { Card, Button, Popover, Avatar, List, Comment } from 'antd';
 import { EllipsisOutlined, HeartOutlined, MessageOutlined, RetweetOutlined, HeartTwoTone } from '@ant-design/icons';
-import { removePostRequestAction } from '../reducers/post';
+import { removePostRequestAction, likePostRequestAction, unlikePostRequestAction } from '../reducers/post';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
@@ -14,20 +14,24 @@ const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.user?.id);
   const { removePostLoading } = useSelector((state) => state.post);
-  const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-
-  const onToggleLike = useCallback(() => {
-    setLiked(!liked);
-  }, [liked]);
 
   const onToggleCommentForm = useCallback(() => {
     setCommentFormOpened(!commentFormOpened);
   }, [commentFormOpened]);
 
+  const onUnlike = useCallback(() => {
+    dispatch(unlikePostRequestAction(post.id));
+  }, []);
+
+  const onLike = useCallback(() => {
+    dispatch(likePostRequestAction(post.id));
+  }, []);
   const onRemovePost = useCallback(() => {
     dispatch(removePostRequestAction(post.id));
   }, []);
+  const liked = post.Likers.find((v) => v.id === id);
+
   return (
     <div style={{ marginBottom: 20 }}>
       <Card
@@ -35,8 +39,8 @@ const PostCard = ({ post }) => {
         actions={[
           <RetweetOutlined key="replop" />,
           liked
-            ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onToggleLike} />
-            : <HeartOutlined key="heart" onClick={onToggleLike} />,
+            ? <HeartTwoTone twoToneColor="#eb2f96" key="heart" onClick={onUnlike} />
+            : <HeartOutlined key="heart" onClick={onLike} />,
           <MessageOutlined key="plop" onClick={onToggleCommentForm} />,
           <Popover
             key="more"
@@ -93,6 +97,7 @@ PostCard.propTypes = {
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 export default PostCard;

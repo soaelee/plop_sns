@@ -19,6 +19,12 @@ export const initialState = {
   loadPostDone: false,
   loadPostError: null,
   hasMorePosts: true,
+  likePostLoading: false,
+  likePostDone: false,
+  likePostError: null,
+  unlikePostLoading: false,
+  unlikePostDone: false,
+  unlikePostError: null,
 };
 
 // react-virtualized 한번 사용해보자! (infiniteloader사용해서)
@@ -80,6 +86,14 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
+export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LIKE_POST_FAILURE';
+
+export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
+export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
+export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
+
 export const addPostRequestAction = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -97,6 +111,16 @@ export const removePostRequestAction = (data) => ({
 
 export const loadPostRequesstAction = () => ({
   type: LOAD_POST_REQUEST,
+});
+
+export const likePostRequestAction = (data) => ({
+  type: LIKE_POST_REQUEST,
+  data,
+});
+
+export const unlikePostRequestAction = (data) => ({
+  type: UNLIKE_POST_REQUEST,
+  data,
 });
 
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
@@ -171,6 +195,42 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loadPostLoading = false;
       draft.loadPostDone = false;
       draft.loadPostError = action.error;
+      break;
+    case LIKE_POST_REQUEST:
+      draft.likePostLoading = true;
+      draft.likePostDone = false;
+      draft.likePostError = null;
+      break;
+    case LIKE_POST_SUCCESS: {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers.push({ id: action.data.UserId });
+      draft.likePostLoading = false;
+      draft.likePostDone = true;
+      draft.likePostError = null;
+      break;
+    }
+    case LIKE_POST_FAILURE:
+      draft.likePostLoading = false;
+      draft.likePostDone = false;
+      draft.likePostError = action.error;
+      break;
+    case UNLIKE_POST_REQUEST:
+      draft.unlikePostLoading = true;
+      draft.unlikePostDone = false;
+      draft.unlikePostError = null;
+      break;
+    case UNLIKE_POST_SUCCESS: {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+      draft.unlikePostLoading = false;
+      draft.unlikePostDone = true;
+      draft.unlikePostError = null;
+      break;
+    }
+    case UNLIKE_POST_FAILURE:
+      draft.unlikePostLoading = false;
+      draft.unlikePostDone = false;
+      draft.unlikePostError = action.error;
       break;
     default:
       break;
