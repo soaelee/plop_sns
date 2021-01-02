@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import { Form, Input, Checkbox, Button } from 'antd';
 import styled from 'styled-components';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import AppLayout from '../components/AppLayout';
@@ -17,7 +17,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (user && user.id) {
-      router.replace('/');
+      router.push('/');
     }
   }, [user && user.id]);
 

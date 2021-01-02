@@ -22,28 +22,27 @@ export const initialState = {
 };
 
 // react-virtualized 한번 사용해보자! (infiniteloader사용해서)
-export const generateDummyPost = (number) => (
+// export const generateDummyPost = (number) => (
 
-  Array(number).fill().map(() => ({
-    id: shortId.generate(),
-    User: {
-      id: shortId.generate(),
-      nickname: faker.name.findName(),
-    },
-    content: faker.lorem.paragraph(),
-    Images: [{
-      src: faker.image.image(),
-    }],
-    Comments: [{
-      User: {
-        id: shortId.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.sentence(),
-    }],
-  }))
-
-);
+//   Array(number).fill().map(() => ({
+//     id: shortId.generate(),
+//     User: {
+//       id: shortId.generate(),
+//       nickname: faker.name.findName(),
+//     },
+//     content: faker.lorem.paragraph(),
+//     Images: [{
+//       src: faker.image.image(),
+//     }],
+//     Comments: [{
+//       User: {
+//         id: shortId.generate(),
+//         nickname: faker.name.findName(),
+//       },
+//       content: faker.lorem.sentence(),
+//     }],
+//   }))
+// );
 
 const dummyComment = (data) => ({
   id: data.postId,

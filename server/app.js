@@ -1,6 +1,7 @@
 const express = require('express');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const postsRouter = require('./routes/posts');
 const db = require('./models');
 const passportConfig = require('./passport');
 const session = require('express-session');
@@ -8,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const morgan = require('morgan');
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true, //나중에 true로
 }));
+app.use(morgan('dev'));
 
 // app.use(cors({
 //   origin: 'https://plop.jjagu.com'
@@ -48,7 +51,7 @@ app.get('/', (req, res) => {
 
 app.use('/post', postRouter);
 app.use('/user', userRouter);
-
+app.use('/posts', postsRouter);
 app.listen(3065, () => {
   console.log('🐶server🚀');
 })

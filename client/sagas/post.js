@@ -5,12 +5,14 @@ import {
   ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE,
   ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE,
   REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE,
-  LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE, generateDummyPost,
+  LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE,
 } from '../reducers/post';
 import { ADD_POST_TO_USER, REMOVE_POST_OF_USER } from '../reducers/user';
 
 function addPostAPI(data) {
-  return axios.post('/post', { content: data });
+  return axios.post('/post', { content: data }, {
+    withCredentials: true,
+  });
 }
 
 function* addPost(action) {
@@ -30,6 +32,7 @@ function* addPost(action) {
       data: res.data.id,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_POST_FAILURE,
       error: err.response.data,
@@ -76,14 +79,19 @@ function* removePost(action) {
   }
 }
 
+function loadPostAPI() {
+  return axios.get('/posts');
+}
+
 function* loadPost() {
   try {
-    yield delay(1000);
+    const res = yield call(loadPostAPI);
     yield put({
       type: LOAD_POST_SUCCESS,
-      data: generateDummyPost(10),
+      data: res.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
       error: err.response.data,

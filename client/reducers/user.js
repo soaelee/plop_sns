@@ -1,6 +1,5 @@
-import { NodeCollapseOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
 import produce from 'immer';
+import { LOAD_POST_FAILURE } from './post';
 
 export const initialState = {
   user: null,
@@ -9,8 +8,8 @@ export const initialState = {
   signupData: {},
 
   loginLoading: false, // 로그인 시도중
-  loginDone: false,
-  loginError: null,
+  loginDone: false, // 로그인 완료
+  loginError: null, // 로그인 에러
 
   logoutLoading: false, // 로그아웃 시도중
   logoutDone: false,
@@ -19,6 +18,10 @@ export const initialState = {
   signupLoading: false, // 회원가입 시도중
   signupDone: false,
   signupError: null,
+
+  loadUserLoading: false,
+  loadUserDone: false,
+  loadUserError: null,
 
   changeNicknameLoading: false,
   changeNicknameDone: false,
@@ -67,6 +70,10 @@ export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
 export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
 
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_POST_FAILURE';
+
 // 얘네는 컴포넌트에서 재사용할 일이 없으니까 action creator로 생성하지 않아도 됨
 export const ADD_POST_TO_USER = 'ADD_POST_TO_USER';
 export const REMOVE_POST_OF_USER = 'REMOVE_POST_OF_USER';
@@ -99,6 +106,11 @@ export const unfollowRequestAction = (data) => ({
   type: UNFOLLOW_REQUEST,
   data,
 });
+
+export const loadUserRequestAction = () => ({
+  type: LOAD_USER_REQUEST,
+});
+
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOG_IN_REQUEST:
@@ -148,6 +160,22 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.signupLoading = false;
       draft.signupDone = false;
       draft.signupError = action.error;
+      break;
+    case LOAD_USER_REQUEST:
+      draft.loadUserLoading = true;
+      draft.loadUserDone = false;
+      draft.loadUserError = null;
+      break;
+    case LOAD_USER_SUCCESS:
+      draft.loadUserLoading = false;
+      draft.loadUserDone = true;
+      draft.loadUserError = null;
+      draft.user = action.data;
+      break;
+    case LOAD_USER_FAILURE:
+      draft.loadUserLoading = false;
+      draft.loadUserDone = false;
+      draft.loadUserError = action.error;
       break;
     case CHANGE_NICKNAME_REQUEST:
       draft.changeNicknameLoading = true;

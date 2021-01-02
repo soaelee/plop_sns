@@ -5,6 +5,37 @@ const { User, Post } = require('../models');
 const passport = require('passport');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
+router.get('/', async(req, res, next) => { // GET /user
+  try{
+    if(req.user) {
+      const fullUserWithoutPassword = await User.findOne({
+        where: {id: req.user.id},
+        attributes: {
+          exclude: ['password']
+        },
+        include: [{
+          model: Post,
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Followings',
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Followers',
+          attributes: ['id'],
+        }]
+      })
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+})
+
 //middleware 확장
 router.post('/login', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -27,12 +58,15 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
         },
         include: [{
           model: Post,
+          attributes: ['id'],
         }, {
           model: User,
           as: 'Followings',
+          attributes: ['id'],
         }, {
           model: User,
           as: 'Followers',
+          attributes: ['id'],
         }]
       })
       return res.status(200).json(fullUserWithoutPassword);
@@ -40,10 +74,10 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/logout', isLoggedIn, (req, res, next) => {
+router.post('/logout', isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
-  return res.send('ok');
+  res.send('ok');
 })
 
 router.post('/', isNotLoggedIn, async (req, res, next) => { // POST /user
