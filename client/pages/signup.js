@@ -16,7 +16,7 @@ const Signup = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user && user.id) {
+    if (user?.id) {
       router.push('/');
     }
   }, [user && user.id]);

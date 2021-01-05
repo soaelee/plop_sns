@@ -25,6 +25,12 @@ export const initialState = {
   unlikePostLoading: false,
   unlikePostDone: false,
   unlikePostError: null,
+  uploadImagesLoading: false,
+  uploadImagesDone: false,
+  uploadImagesError: null,
+  replopLoading: false,
+  replopDone: false,
+  replopError: null,
 };
 
 // react-virtualized 한번 사용해보자! (infiniteloader사용해서)
@@ -94,6 +100,15 @@ export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
 export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
 export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
+
+export const REMOVE_IMAGE_REQUEST = 'REMOVE_IMAGE_REQUEST';
+
+export const REPLOP_REQUEST = 'REPLOP_REQUEST';
+export const REPLOP_SUCCESS = 'REPLOP_SUCCESS';
+export const REPLOP_FAILURE = 'REPLOP_FAILURE';
 export const addPostRequestAction = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -109,8 +124,9 @@ export const removePostRequestAction = (data) => ({
   data,
 });
 
-export const loadPostRequesstAction = () => ({
+export const loadPostRequesstAction = (data) => ({
   type: LOAD_POST_REQUEST,
+  data,
 });
 
 export const likePostRequestAction = (data) => ({
@@ -123,6 +139,21 @@ export const unlikePostRequestAction = (data) => ({
   data,
 });
 
+export const uploadImagesRequestAction = (data) => ({
+  type: UPLOAD_IMAGES_REQUEST,
+  data,
+});
+
+// 동기 액션이기 때문에 한가지 액션만 만들면 됨
+export const removeImageRequestAction = (data) => ({
+  type: REMOVE_IMAGE_REQUEST,
+  data,
+});
+
+export const replopRequestAction = (data) => ({
+  type: REPLOP_REQUEST,
+  data,
+});
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   // state가 draft됨
@@ -155,6 +186,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.addCommentLoading = false;
       draft.addCommentError = null;
       draft.addCommentDone = true;
+      draft.imagePaths = [];
       break;
     }
     case ADD_COMMENT_FAILURE:
@@ -187,8 +219,8 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loadPostLoading = false;
       draft.loadPostDone = true;
       draft.loadPostError = null;
-      draft.mainPosts = action.data.concat(draft.mainPosts);
-      draft.hasMorePosts = draft.mainPosts.length < 50;
+      draft.mainPosts = draft.mainPosts.concat(action.data);
+      draft.hasMorePosts = action.data.length === 10;
       // 50개보다 많아지면 false, 안가져오겠다!
       break;
     case LOAD_POST_FAILURE:
@@ -231,6 +263,41 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.unlikePostLoading = false;
       draft.unlikePostDone = false;
       draft.unlikePostError = action.error;
+      break;
+    case UPLOAD_IMAGES_REQUEST:
+      draft.uploadImagesLoading = true;
+      draft.uploadImagesDone = false;
+      draft.uploadImagesError = null;
+      break;
+    case UPLOAD_IMAGES_SUCCESS:
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesDone = true;
+      draft.uploadImagesError = null;
+      draft.imagePaths = action.data;
+      break;
+    case UPLOAD_IMAGES_FAILURE:
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesDone = false;
+      draft.uploadImagesError = action.error;
+      break;
+    case REMOVE_IMAGE_REQUEST:
+      draft.imagePaths.splice(action.data, 1);
+      break;
+    case REPLOP_REQUEST:
+      draft.replopLoading = true;
+      draft.replopDone = false;
+      draft.replopError = null;
+      break;
+    case REPLOP_SUCCESS:
+      draft.replopLoading = false;
+      draft.replopDone = true;
+      draft.replopError = null;
+      draft.mainPosts.unshift(action.data);
+      break;
+    case REPLOP_FAILURE:
+      draft.replopLoading = false;
+      draft.replopDone = false;
+      draft.replopError = action.error;
       break;
     default:
       break;

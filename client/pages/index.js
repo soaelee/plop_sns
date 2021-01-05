@@ -12,33 +12,35 @@ const Home = () => {
   const { user } = useSelector((state) => state.user);
   const { mainPosts } = useSelector((state) => state.post);
 
-  const { hasMorePosts, loadPostLoading } = useSelector((state) => state.post);
+  const { hasMorePosts, loadPostLoading, replopError } = useSelector((state) => state.post);
 
   useEffect(() => {
     dispatch(loadUserRequestAction());
-    // post가 50개 이하이고, loadPost 액션이 실행중이 아닐 때
-    if (hasMorePosts && !loadPostLoading) {
-      dispatch(loadPostRequesstAction());
-    }
+    dispatch(loadPostRequesstAction());
   }, []);
 
-  const onScroll = () => {
-    const { scrollY } = window; // 윈도우 맨위의 위치
-    const { clientHeight } = document.documentElement; // 화면에 보이는 뷰의 높이
-    const { scrollHeight } = document.documentElement; // 윈도우 전체의 높이(scroll)
-    if (scrollY + clientHeight > scrollHeight - 400) {
-      if (hasMorePosts && !loadPostLoading) {
-        dispatch(loadPostRequesstAction());
-      }
+  useEffect(() => {
+    if (replopError) {
+      alert(replopError);
     }
-  };
+  }, [replopError]);
 
   useEffect(() => {
+    function onScroll() {
+      if (
+        window.pageYOffset + document.documentElement.clientHeight
+        > document.documentElement.scrollHeight - 300) {
+        if (hasMorePosts && !loadPostLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          dispatch(loadPostRequesstAction(lastId));
+        }
+      }
+    }
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [hasMorePosts, loadPostLoading]);
+  }, [hasMorePosts, loadPostLoading, mainPosts]);
 
   return (
     <AppLayout>

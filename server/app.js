@@ -10,7 +10,7 @@ const passport = require('passport');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const morgan = require('morgan');
-
+const path = require('path');
 dotenv.config();
 
 const app = express();
@@ -34,6 +34,8 @@ app.use(morgan('dev'));
 // }))
 // req.json과 form submit(form == urlencoded)
 
+// dirname + /uploads = 보안에 이점
+app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(session({
@@ -47,11 +49,12 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.get('/', (req, res) => {
   res.send('🐶메롱');
-}) 
-
+}); 
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/posts', postsRouter);
+
+
 app.listen(3065, () => {
   console.log('🐶server🚀');
 })

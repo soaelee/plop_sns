@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { LOAD_POST_FAILURE } from './post';
 
 export const initialState = {
   user: null,

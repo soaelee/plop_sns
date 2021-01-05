@@ -1,4 +1,3 @@
-import { Popover } from 'antd';
 import axios from 'axios';
 import { all, call, delay, fork, put, takeLatest, throttle } from 'redux-saga/effects';
 import shortId from 'shortid';
@@ -9,13 +8,13 @@ import {
   LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE,
   LIKE_POST_SUCCESS, LIKE_POST_REQUEST, LIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_SUCCESS, REPLOP_REQUEST, REPLOP_SUCCESS, REPLOP_FAILURE,
 } from '../reducers/post';
 import { ADD_POST_TO_USER, REMOVE_POST_OF_USER } from '../reducers/user';
 
 function addPostAPI(data) {
-  return axios.post('/post', { content: data }, {
-    withCredentials: true,
-  });
+  // formdata는 바로 data로 전송해야 함, 안그러면 JSON으로 변환됨
+  return axios.post('/post', data);
 }
 
 function* addPost(action) {
@@ -82,13 +81,14 @@ function* removePost(action) {
   }
 }
 
-function loadPostAPI() {
-  return axios.get('/posts');
+function loadPostAPI(lastId) {
+  return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
-function* loadPost() {
+function* loadPost(action) {
   try {
-    const res = yield call(loadPostAPI);
+    const res = yield call(loadPostAPI, action.data);
+    console.log(action.data);
     yield put({
       type: LOAD_POST_SUCCESS,
       data: res.data,
@@ -140,6 +140,45 @@ function* unlikePost(action) {
   }
 }
 
+function uploadImagesAPI(data) {
+  return axios.post('/post/images', data);
+}
+function* uploadImages(action) {
+  try {
+    const res = yield call(uploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function replopAPI(data) {
+  return axios.post(`/post/${data}/replop`, data);
+}
+function* replop(action) {
+  try {
+    const res = yield call(replopAPI, action.data);
+    yield put({
+      type: REPLOP_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    console.log(err);
+    yield put({
+      type: REPLOP_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -163,6 +202,14 @@ function* watchLikePost() {
 function* watchUnlikePost() {
   yield throttle(2000, UNLIKE_POST_REQUEST, unlikePost);
 }
+
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+
+function* watchReplop() {
+  yield takeLatest(REPLOP_REQUEST, replop);
+}
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -171,5 +218,7 @@ export default function* postSaga() {
     fork(watchLoadPost),
     fork(watchLikePost),
     fork(watchUnlikePost),
+    fork(watchUploadImages),
+    fork(watchReplop),
   ]);
 }

@@ -13,11 +13,9 @@ const Global = createGlobalStyle`
     margin-right: 0 !important;
     margin-left: 0 !important;
   }
-
   .ant-col:first-child {
     padding-left: 0 !important;
   }
-
   .ant-col:last-child {
     padding-right: 0 !important;
   }

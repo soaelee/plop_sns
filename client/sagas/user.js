@@ -71,7 +71,7 @@ function* signUp(action) {
 }
 
 function followAPI(data) {
-  return axios.patch(`user/${data}/follow`);
+  return axios.patch(`/user/${data}/follow`);
 }
 
 function* follow(action) {
