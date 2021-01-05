@@ -4,13 +4,12 @@ const bcrypt = require('bcrypt');
 const { User, Post } = require('../models');
 const passport = require('passport');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
-const user = require('../models/user');
 
-router.get('/', async(req, res, next) => { // GET /user
-  try{
-    if(req.user) {
+router.get('/', async (req, res, next) => { // GET /user
+  try {
+    if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
-        where: {id: req.user.id},
+        where: { id: req.user.id },
         attributes: {
           exclude: ['password']
         },
@@ -31,11 +30,12 @@ router.get('/', async(req, res, next) => { // GET /user
     } else {
       res.status(200).json(null);
     }
-  } catch (err) {
-    console.error(err);
-    next(err);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
-})
+});
+
 
 //middleware 확장
 router.post('/login', isNotLoggedIn, (req, res, next) => {

@@ -28,7 +28,7 @@ const upload = multer({
 });
 
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => { 
-  console.log(req.files); //업로드된 이미지에 대한 정보
+
   res.json(req.files.map(v => v.filename));
 });
 

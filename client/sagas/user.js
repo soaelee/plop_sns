@@ -6,7 +6,7 @@ import {
   FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE,
   UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE,
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
-  LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
+  LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE,
   CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_SUCCESS,
   LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,
   LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
@@ -108,20 +108,21 @@ function* unfollow(action) {
   }
 }
 
-function loadUserAPI() {
+function loadMyInfoAPI() {
   return axios.get('/user');
 }
 
-function* loadUser() {
+function* loadMyInfo() {
   try {
-    const res = yield call(loadUserAPI);
+    const res = yield call(loadMyInfoAPI);
     yield put({
-      type: LOAD_USER_SUCCESS,
+      type: LOAD_MY_INFO_SUCCESS,
       data: res.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
-      type: LOAD_USER_FAILURE,
+      type: LOAD_MY_INFO_FAILURE,
       error: err.response.data,
     });
   }
@@ -226,8 +227,8 @@ function* watchUnfollow() {
   yield takeLatest(UNFOLLOW_REQUEST, unfollow);
 }
 
-function* watchLoadUser() {
-  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
 function* watchChangeNickname() {
@@ -252,7 +253,7 @@ export default function* userSaga() {
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),
-    fork(watchLoadUser),
+    fork(watchLoadMyInfo),
     fork(watchChangeNickname),
     fork(watchloadFollowers),
     fork(watchloadFollowings),

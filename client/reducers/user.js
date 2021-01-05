@@ -18,9 +18,9 @@ export const initialState = {
   signupDone: false,
   signupError: null,
 
-  loadUserLoading: false,
-  loadUserDone: false,
-  loadUserError: null,
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
 
   changeNicknameLoading: false,
   changeNicknameDone: false,
@@ -46,6 +46,7 @@ export const initialState = {
   removeFollowerDone: false,
   removeFollowerError: null,
 
+  userInfo: null,
 };
 
 const dummyUser = (data) => ({
@@ -81,9 +82,9 @@ export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
 export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
 
-export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
-export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
-export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
 export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
@@ -130,8 +131,8 @@ export const unfollowRequestAction = (data) => ({
   data,
 });
 
-export const loadUserRequestAction = () => ({
-  type: LOAD_USER_REQUEST,
+export const loadMyInfoRequestAction = () => ({
+  type: LOAD_MY_INFO_REQUEST,
 });
 
 export const loadFollowersRequestAction = () => ({
@@ -146,6 +147,7 @@ export const removeFollowerRequestAction = (data) => ({
   type: REMOVE_FOLLOWER_REQUEST,
   data,
 });
+
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOG_IN_REQUEST:
@@ -196,21 +198,21 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.signupDone = false;
       draft.signupError = action.error;
       break;
-    case LOAD_USER_REQUEST:
-      draft.loadUserLoading = true;
-      draft.loadUserDone = false;
-      draft.loadUserError = null;
+    case LOAD_MY_INFO_REQUEST:
+      draft.loadMyInfoLoading = true;
+      draft.loadMyInfoDone = false;
+      draft.loadMyInfoError = null;
       break;
-    case LOAD_USER_SUCCESS:
-      draft.loadUserLoading = false;
-      draft.loadUserDone = true;
-      draft.loadUserError = null;
+    case LOAD_MY_INFO_SUCCESS:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoDone = true;
+      draft.loadMyInfoError = null;
       draft.user = action.data;
       break;
-    case LOAD_USER_FAILURE:
-      draft.loadUserLoading = false;
-      draft.loadUserDone = false;
-      draft.loadUserError = action.error;
+    case LOAD_MY_INFO_FAILURE:
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoDone = false;
+      draft.loadMyInfoError = action.error;
       break;
     case CHANGE_NICKNAME_REQUEST:
       draft.changeNicknameLoading = true;
