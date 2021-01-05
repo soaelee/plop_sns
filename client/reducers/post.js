@@ -124,7 +124,7 @@ export const removePostRequestAction = (data) => ({
   data,
 });
 
-export const loadPostRequesstAction = (data) => ({
+export const loadPostRequestAction = (data) => ({
   type: LOAD_POST_REQUEST,
   data,
 });

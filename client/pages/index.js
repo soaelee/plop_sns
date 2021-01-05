@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { END } from 'redux-saga';
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
-import { loadPostRequesstAction } from '../reducers/post';
+import { loadPostRequestAction } from '../reducers/post';
 import { loadUserRequestAction } from '../reducers/user';
+import wrapper from '../store/configureStore';
 
 const Home = () => {
   // 무한 스크롤 : mounted 됐을 때, useEffect 이용해서 scroll 이벤트
@@ -13,11 +15,6 @@ const Home = () => {
   const { mainPosts } = useSelector((state) => state.post);
 
   const { hasMorePosts, loadPostLoading, replopError } = useSelector((state) => state.post);
-
-  useEffect(() => {
-    dispatch(loadUserRequestAction());
-    dispatch(loadPostRequesstAction());
-  }, []);
 
   useEffect(() => {
     if (replopError) {
@@ -32,7 +29,7 @@ const Home = () => {
         > document.documentElement.scrollHeight - 300) {
         if (hasMorePosts && !loadPostLoading) {
           const lastId = mainPosts[mainPosts.length - 1]?.id;
-          dispatch(loadPostRequesstAction(lastId));
+          dispatch(loadPostRequestAction(lastId));
         }
       }
     }
@@ -49,5 +46,14 @@ const Home = () => {
     </AppLayout>
   );
 };
+
+// 서버사이드 렌더링 준비
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log(context);
+  context.store.dispatch(loadUserRequestAction());
+  context.store.dispatch(loadPostRequestAction());
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
 
 export default Home;
