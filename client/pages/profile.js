@@ -2,34 +2,28 @@ import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import { END } from 'redux-saga';
+import axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import NicknameEditForm from '../components/NicknameEditForm';
-import FollowerList from '../components/FollowerList';
 import FollowList from '../components/FollowList';
-import { loadFollowingsRequestAction, loadFollowersRequestAction } from '../reducers/user';
+import { loadFollowingsRequestAction, loadFollowersRequestAction, loadMyInfoRequestAction } from '../reducers/user';
+import wrapper from '../store/configureStore';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
     // user정보가 없으면 리다이렉트
-    if (!user) {
+    if (!(user && user.id)) {
       router.push('/');
     }
-  }, [user]);
+  }, [user && user.id]);
 
-  useEffect(() => {
-    dispatch(loadFollowersRequestAction());
-    dispatch(loadFollowingsRequestAction());
-  }, []);
-  // user 정보가 없으면 null 반환
   if (!user) {
-    console.log('로그인이 필요한 기능입니다.');
-    return null;
+    return '내 정보 로딩중...';
   }
-
   return (
     <>
       <Head>
@@ -43,5 +37,19 @@ const Profile = () => {
     </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log('getServerSideProps start');
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch(loadMyInfoRequestAction());
+  context.store.dispatch(END);
+  console.log('getServerSideProps End');
+  await context.store.sagaTask.toPromise();
+});
 
 export default Profile;

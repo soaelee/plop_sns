@@ -11,6 +11,7 @@ import {
   LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,
   LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
   REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS,
+  LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
 } from '../reducers/user';
 
 function logoutAPI(data) {
@@ -128,6 +129,25 @@ function* loadMyInfo() {
   }
 }
 
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const res = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 function changeNicknameAPI(data) {
   return axios.patch('/user/nickname', { nickname: data });
 }
@@ -231,6 +251,10 @@ function* watchLoadMyInfo() {
   yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
 function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
@@ -254,6 +278,7 @@ export default function* userSaga() {
     fork(watchFollow),
     fork(watchUnfollow),
     fork(watchLoadMyInfo),
+    fork(watchLoadUser),
     fork(watchChangeNickname),
     fork(watchloadFollowers),
     fork(watchloadFollowings),

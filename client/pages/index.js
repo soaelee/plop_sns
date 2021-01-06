@@ -25,6 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     function onScroll() {
+      //  pageYOffset
       if (
         window.pageYOffset + document.documentElement.clientHeight
         > document.documentElement.scrollHeight - 300) {

@@ -80,6 +80,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST 
   }
 });
 
+
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => { // POST /post/1/comment
   try {
     const post = await Post.findOne({
@@ -203,6 +204,36 @@ router.post('/:postId/replop', isLoggedIn, async (req, res, next) => { // POST /
       }],
     })
     res.status(201).json(replopWithPrevPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+
+router.get('/:postId', async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [{
+        model: User,
+        attributes: ['id', 'nickname'],
+      }, {
+        model: Image,
+      }, {
+        model: Comment,
+        include: [{
+          model: User,
+          attributes: ['id', 'nickname'],
+          order: [['createdAt', 'DESC']],
+        }],
+      }, {
+        model: User, // 좋아요 누른 사람
+        as: 'Likers',
+        attributes: ['id'],
+      }],
+    });
+    res.status(200).json(post);
   } catch (error) {
     console.error(error);
     next(error);

@@ -8,7 +8,9 @@ import {
   LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE,
   LIKE_POST_SUCCESS, LIKE_POST_REQUEST, LIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
-  UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_SUCCESS, REPLOP_REQUEST, REPLOP_SUCCESS, REPLOP_FAILURE,
+  UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_SUCCESS,
+  REPLOP_REQUEST, REPLOP_SUCCESS, REPLOP_FAILURE,
+  LOAD_POST_DETAIL_REQUEST, LOAD_POST_DETAIL_SUCCESS, LOAD_POST_DETAIL_FAILURE,
 } from '../reducers/post';
 import { ADD_POST_TO_USER, REMOVE_POST_OF_USER } from '../reducers/user';
 
@@ -97,6 +99,27 @@ function* loadPost(action) {
     console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadPostDetailAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+
+function* loadPostDetail(action) {
+  try {
+    const res = yield call(loadPostDetailAPI, action.data);
+    console.log(action.data);
+    yield put({
+      type: LOAD_POST_DETAIL_SUCCESS,
+      data: res.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_POST_DETAIL_FAILURE,
       error: err.response.data,
     });
   }
@@ -195,6 +218,10 @@ function* watchLoadPost() {
   yield throttle(2000, LOAD_POST_REQUEST, loadPost);
 }
 
+function* watchLoadPostDatail() {
+  yield takeLatest(LOAD_POST_DETAIL_REQUEST, loadPostDetail);
+}
+
 function* watchLikePost() {
   yield throttle(2000, LIKE_POST_REQUEST, likePost);
 }
@@ -216,6 +243,7 @@ export default function* postSaga() {
     fork(watchAddComment),
     fork(watchRemovePost),
     fork(watchLoadPost),
+    fork(watchLoadPostDatail),
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchUploadImages),

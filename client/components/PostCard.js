@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { Card, Button, Popover, Avatar, List, Comment } from 'antd';
 import { EllipsisOutlined, HeartOutlined, MessageOutlined, RetweetOutlined, HeartTwoTone } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import { removePostRequestAction, likePostRequestAction, unlikePostRequestAction, replopRequestAction } from '../reducers/post';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
@@ -11,11 +12,15 @@ import PostCardContent from './PostCardContent';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.user?.id);
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
+  const onClickPost = useCallback(() => {
+    router.push(`/post/${post.id}`);
+  }, []);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(!commentFormOpened);
   }, [commentFormOpened]);
@@ -48,7 +53,7 @@ const PostCard = ({ post }) => {
   const liked = post.Likers.find((v) => v.id === id);
 
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div style={{ marginBottom: 20 }} onClick={onClickPost}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[

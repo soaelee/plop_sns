@@ -18,6 +18,9 @@ export const initialState = {
   loadPostLoading: false,
   loadPostDone: false,
   loadPostError: null,
+  loadPostDetailLoading: false,
+  loadPostDetailDone: false,
+  loadPostDetailError: null,
   hasMorePosts: true,
   likePostLoading: false,
   likePostDone: false,
@@ -31,6 +34,8 @@ export const initialState = {
   replopLoading: false,
   replopDone: false,
   replopError: null,
+
+  singlePost: null,
 };
 
 // react-virtualized 한번 사용해보자! (infiniteloader사용해서)
@@ -84,6 +89,10 @@ export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
+export const LOAD_POST_DETAIL_REQUEST = 'LOAD_POST_DETAIL_REQUEST';
+export const LOAD_POST_DETAIL_SUCCESS = 'LOAD_POST_DETAIL_SUCCESS';
+export const LOAD_POST_DETAIL_FAILURE = 'LOAD_POST_DETAIL_FAILURE';
+
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
@@ -126,6 +135,11 @@ export const removePostRequestAction = (data) => ({
 
 export const loadPostRequestAction = (data) => ({
   type: LOAD_POST_REQUEST,
+  data,
+});
+
+export const loadPostDetailRequestAction = (data) => ({
+  type: LOAD_POST_DETAIL_REQUEST,
   data,
 });
 
@@ -227,6 +241,22 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loadPostLoading = false;
       draft.loadPostDone = false;
       draft.loadPostError = action.error;
+      break;
+    case LOAD_POST_DETAIL_REQUEST:
+      draft.loadPostDetailLoading = true;
+      draft.loadPostDetailDone = false;
+      draft.loadPostDetailError = null;
+      break;
+    case LOAD_POST_DETAIL_SUCCESS:
+      draft.loadPostDetailLoading = false;
+      draft.loadPostDetailDone = true;
+      draft.loadPostDetailError = null;
+      draft.singlePost = action.data;
+      break;
+    case LOAD_POST_DETAIL_FAILURE:
+      draft.loadPostDetailLoading = false;
+      draft.loadPostDetailDone = false;
+      draft.loadPostDetailError = action.error;
       break;
     case LIKE_POST_REQUEST:
       draft.likePostLoading = true;
