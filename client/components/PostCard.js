@@ -19,7 +19,7 @@ const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
   const onClickPost = useCallback(() => {
-    router.push(`/post/${post.id}`);
+    console.log(post.id);
   }, []);
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(!commentFormOpened);
@@ -53,7 +53,7 @@ const PostCard = ({ post }) => {
   const liked = post.Likers.find((v) => v.id === id);
 
   return (
-    <div style={{ marginBottom: 20 }} onClick={onClickPost}>
+    <div style={{ marginBottom: 20 }}>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[

@@ -18,7 +18,7 @@ export const initialState = {
   loadPostLoading: false,
   loadPostDone: false,
   loadPostError: null,
-  loadPostDetailLoading: false,
+  loadUserPostsDetailLoading: false,
   loadPostDetailDone: false,
   loadPostDetailError: null,
   hasMorePosts: true,
@@ -34,7 +34,6 @@ export const initialState = {
   replopLoading: false,
   replopDone: false,
   replopError: null,
-
   singlePost: null,
 };
 
@@ -118,6 +117,15 @@ export const REMOVE_IMAGE_REQUEST = 'REMOVE_IMAGE_REQUEST';
 export const REPLOP_REQUEST = 'REPLOP_REQUEST';
 export const REPLOP_SUCCESS = 'REPLOP_SUCCESS';
 export const REPLOP_FAILURE = 'REPLOP_FAILURE';
+
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
+
+export const LOAD_HASHTAG_POSTS_REQUEST = 'LOAD_HASHTAG_POSTS_REQUEST';
+export const LOAD_HASHTAG_POSTS_SUCCESS = 'LOAD_HASHTAG_POSTS_SUCCESS';
+export const LOAD_HASHTAG_POSTS_FAILURE = 'LOAD_HASHTAG_POSTS_FAILURE';
+
 export const addPostRequestAction = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -166,6 +174,16 @@ export const removeImageRequestAction = (data) => ({
 
 export const replopRequestAction = (data) => ({
   type: REPLOP_REQUEST,
+  data,
+});
+
+export const loadUserPostsRequestAction = (data) => ({
+  type: LOAD_USER_POSTS_REQUEST,
+  data,
+});
+
+export const loadHashtagPostsRequestAction = (data) => ({
+  type: LOAD_HASHTAG_POSTS_REQUEST,
   data,
 });
 // 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
@@ -224,11 +242,15 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.removePostDone = false;
       draft.removePostError = action.error;
       break;
+    case LOAD_USER_POSTS_REQUEST:
+    case LOAD_HASHTAG_POSTS_REQUEST:
     case LOAD_POST_REQUEST:
       draft.loadPostLoading = true;
       draft.loadPostDone = false;
       draft.loadPostError = null;
       break;
+    case LOAD_USER_POSTS_SUCCESS:
+    case LOAD_HASHTAG_POSTS_SUCCESS:
     case LOAD_POST_SUCCESS:
       draft.loadPostLoading = false;
       draft.loadPostDone = true;
@@ -237,6 +259,8 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.hasMorePosts = action.data.length === 10;
       // 50개보다 많아지면 false, 안가져오겠다!
       break;
+    case LOAD_USER_POSTS_FAILURE:
+    case LOAD_HASHTAG_POSTS_FAILURE:
     case LOAD_POST_FAILURE:
       draft.loadPostLoading = false;
       draft.loadPostDone = false;
