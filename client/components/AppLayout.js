@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { Menu, Input, Row, Col } from 'antd';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useSelector } from 'react-redux';
-
+import Router from 'next/router';
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
+import useInput from '../hooks/useInput';
 
 const Global = createGlobalStyle`
   .ant-row{
@@ -28,7 +29,11 @@ const AppLayout = ({ children }) => {
   // const [isLogin, setIsLogin] = useState(false);
 
   const { user } = useSelector((state) => state.user);
-
+  const searchInput = useInput('');
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput.value}`);
+    console.log(searchInput.value);
+  }, [searchInput.value]);
   return (
     <div>
       <Global />
@@ -40,7 +45,12 @@ const AppLayout = ({ children }) => {
           <Link href="/profile"><a>프로필</a></Link>
         </Menu.Item>
         <Menu.Item>
-          <SearchInput enterButton />
+          <SearchInput
+            enterButton
+            value={searchInput.value}
+            onChange={searchInput.handler}
+            onSearch={onSearch}
+          />
         </Menu.Item>
         { !user?.id
         && (

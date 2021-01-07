@@ -8,8 +8,6 @@ import {
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
   LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE,
   CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_SUCCESS,
-  LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,
-  LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
   REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS,
   LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
 } from '../reducers/user';
@@ -168,46 +166,6 @@ function* changeNickname(action) {
   }
 }
 
-function loadFollowingsAPI() {
-  return axios.get('/user/followings');
-}
-
-function* loadFollowings() {
-  try {
-    const res = yield call(loadFollowingsAPI);
-    yield put({
-      type: LOAD_FOLLOWINGS_SUCCESS,
-      data: res.data,
-    });
-  } catch (err) {
-    console.error(err);
-    yield put({
-      type: LOAD_FOLLOWINGS_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
-function loadFollowersAPI() {
-  return axios.get('/user/followers');
-}
-
-function* loadFollowers() {
-  try {
-    const res = yield call(loadFollowersAPI);
-    yield put({
-      type: LOAD_FOLLOWERS_SUCCESS,
-      data: res.data,
-    });
-  } catch (err) {
-    console.error(err);
-    yield put({
-      type: LOAD_FOLLOWERS_FAILURE,
-      error: err.response.data,
-    });
-  }
-}
-
 function removeFollowerAPI(data) {
   return axios.delete(`/user/follower/${data}`);
 }
@@ -259,14 +217,6 @@ function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
 
-function* watchloadFollowers() {
-  yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers);
-}
-
-function* watchloadFollowings() {
-  yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
-}
-
 function* watchRemoveFollower() {
   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
@@ -280,8 +230,6 @@ export default function* userSaga() {
     fork(watchLoadMyInfo),
     fork(watchLoadUser),
     fork(watchChangeNickname),
-    fork(watchloadFollowers),
-    fork(watchloadFollowings),
     fork(watchRemoveFollower),
   ]);
 }

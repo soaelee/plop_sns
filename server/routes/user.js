@@ -36,42 +36,6 @@ router.get('/', async (req, res, next) => { // GET /user
   }
 });
 
-router.get('/:userId', async (req, res, next) => { // GET /user/1
-  try {
-      const fullUserWithoutPassword = await User.findOne({
-        where: { id: req.params.userId },
-        attributes: {
-          exclude: ['password']
-        },
-        include: [{
-          model: Post,
-          attributes: ['id'],
-        }, {
-          model: User,
-          as: 'Followings',
-          attributes: ['id'],
-        }, {
-          model: User,
-          as: 'Followers',
-          attributes: ['id'],
-        }]
-      })
-      if (fullUserWithoutPassword) {
-        const data = fullUserWithoutPassword.toJSON();
-        // 개인정보 침해 예방
-        data.Posts = data.Posts.length;
-        data.Followers = data.Followers.length;
-        data.Followings = data.Followings.length;
-        res.status(200).json(data);
-      } else {
-        res.status(404).json('존재하지 않는 사용자입니다.');
-      }
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
-
 router.get('/:id/posts', async (req, res, next) => { // GET /user/1/posts
   try {
     const user = await User.findOne({ where: { id: req.params.id }});
@@ -218,7 +182,7 @@ router.post('/', isNotLoggedIn, async (req, res, next) => { // POST /user
       nickname: req.body.nickname,
       password: hashedPassword,
     });
-
+    
     // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3060')
     res.status(200).send('ok');
   }
@@ -276,7 +240,9 @@ router.get('/followers', isLoggedIn, async (req, res, next) => { // GET /user/fo
     if (!user) {
       res.status(403).send('팔로우 유저가 없습니다.');
     }
-    const followers = await user.getFollowers();
+    const followers = await user.getFollowers({
+      limit: parseInt(req.query.limit, 10),
+    });
     res.status(200).json(followers);
   } catch (error) {
     console.error(error);
@@ -290,7 +256,9 @@ router.get('/followings', isLoggedIn, async (req, res, next) => { // GET /user/f
     if (!user) {
       res.status(403).send('팔로잉한 유저가 없습니다.');
     }
-    const followings = await user.getFollowings();
+    const followings = await user.getFollowings({
+      limit: parseInt(req.query.limit, 10),
+    });
     res.status(200).json(followings);
   } catch (error) {
     console.error(error);
@@ -306,6 +274,42 @@ router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => { // DE
     }
     await user.removeFollowings(req.params.userId);
     res.status(200).json({UserId: parseInt(req.params.userId, 10)});
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get('/:userId', async (req, res, next) => { // GET /user/1
+  try {
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.params.userId },
+        attributes: {
+          exclude: ['password']
+        },
+        include: [{
+          model: Post,
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Followings',
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Followers',
+          attributes: ['id'],
+        }]
+      })
+      if (fullUserWithoutPassword) {
+        const data = fullUserWithoutPassword.toJSON();
+        // 개인정보 침해 예방
+        data.Posts = data.Posts.length;
+        data.Followers = data.Followers.length;
+        data.Followings = data.Followings.length;
+        res.status(200).json(data);
+      } else {
+        res.status(404).json('존재하지 않는 사용자입니다.');
+      }
   } catch (error) {
     console.error(error);
     next(error);

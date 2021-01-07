@@ -74,7 +74,7 @@ const User = () => {
             ]}
           >
             <Card.Meta
-              avatar={<Avatar>{userInfo.nickname[0]}</Avatar>}
+              avatar={<Avatar>{post.Replop.User.nickname[0]}</Avatar>}
               title={userInfo.nickname}
             />
           </Card>

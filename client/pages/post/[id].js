@@ -15,8 +15,10 @@ const Post = () => {
   const router = useRouter();
   const { id } = router.query;
   const { singlePost } = useSelector((state) => state.post);
+
   return (
     <AppLayout>
+      {singlePost && (
       <Head>
         <title>
           {singlePost?.User?.nickname}님의 글
@@ -27,7 +29,12 @@ const Post = () => {
         <meta property="og:image" content={singlePost?.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico'} />
         <meta property="og:url" content={`https://props.jjagu.com/post/${id}`} />
       </Head>
-      <PostCard post={singlePost} />
+      )}
+      {singlePost
+        ? (
+
+          <PostCard post={singlePost} />
+        ) : null}
     </AppLayout>
   );
 };
@@ -44,5 +51,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
 
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();
+  return { props: {} };
 });
 export default Post;
